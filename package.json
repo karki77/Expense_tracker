@@ -13,10 +13,10 @@
     "start": "node dist/server.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
-    "lint": "eslint src --ext .ts, .js",
-    "lint:fix": "eslint src --ext .ts, .js --fix",
+    "lint": "eslint src --ext .ts,.js",
+    "lint:fix": "eslint src --ext .ts,.js --fix",
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
