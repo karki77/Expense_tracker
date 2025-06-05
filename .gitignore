@@ -1,0 +1,17 @@
+node_modules
+# Keep environment variables out of version control
+.env
+build
+dist
+coverage
+
+// repo.
+
+// branch -> develop
+
+// authentication: feat/authentication
+
+
+// fix/authentication "",
+
+// git checkout -b fix/authenticationlogs/*.lo

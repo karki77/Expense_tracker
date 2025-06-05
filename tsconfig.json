@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+     "target": "ESNext",
+     "module":"CommonJS", // or "ESNext" if you are using ES modules 
+     "moduleResolution": "node", //Explicitly set module resolution
+     "esModuleInterop": true,
+     "forceConsistentCasingInFileNames": true,
+     "allowSyntheticDefaultImports": true,
+     "strict": true,
+     "skipLibCheck": true,
+     "resolveJsonModule": true,
+     "sourceMap": true,
+     "outDir": "dist",
+     "rootDir": "src",
+     "baseUrl": "./src", // if you need base URL
+     "experimentalDecorators": true,
+     "emitDecoratorMetadata": true,
+     "declaration": true,
+      "paths": {
+      "#types/*": ["types/*"],
+      "#dto/*": ["dto/*"],
+      "#utils/*": ["utils/*"],
+      "#constants/*": ["constants/*"],
+      "#entities/*": ["entities/*"],
+      "#modules/*": ["modules/*"],
+      "#middlewares/*": ["middlewares/*"]
+    },
+    "composite": true //optional: for monorepos or incremental compilation 
+  },
+  "include": ["src/**/*"], //Correct: Includes all TS files in src 
+  "exclude": ["dist", "node_modules"]  //Correct: Excludes dist and node_modules 
+}
+    

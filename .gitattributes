@@ -1,0 +1,10 @@
+# Enforce LF for text files
+* text=auto eol=lf
+
+# Specific file types (optional)
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+
+* text=auto
