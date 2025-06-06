@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const createUserSchema = z
+export const registerUserSchema = z
   .object({
     name: z.string().min(1, { message: 'Name is required' }),
     username: z
@@ -39,4 +39,4 @@ export const createUserSchema = z
     message: 'Extra fields are not allowed in the registration data',
   });
 
-export type CreateUserSchema = z.infer<typeof createUserSchema>;
+export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
