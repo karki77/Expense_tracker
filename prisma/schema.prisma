@@ -18,6 +18,8 @@ enum Period {
 model User {
   id                      String    @id @default(uuid())
   email                   String    @unique
+  firstname               String
+  lastname                String
   username                String    @unique
   password                String
   profile                 String?
@@ -38,6 +40,10 @@ model User {
 model Profile {
   id                      String    @id @default(uuid())
   userId                  String    @unique
+  firstname               String
+  lastname                String
+  username                String    @unique
+  image                   String
   // Basic Financial Summary
   totalExpenses           Float     @default(0)
   totalBudget             Float     @default(0)

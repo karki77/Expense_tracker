@@ -4,7 +4,8 @@ import express, { static as serveStatic } from 'express';
 
 import config from './config/setup/envConfig';
 import { logger, morganLogger } from './utils/logger';
-
+import appRouter from './router';
+import globalErrorHandler from './middleware/globalErrorHandler';
 // type
 
 // utilty
@@ -40,6 +41,8 @@ app.use(express.json());
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
+app.use('/api/v2', appRouter);
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
   logger.info(`Server is running at port ${PORT}`);

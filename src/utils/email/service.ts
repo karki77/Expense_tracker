@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { IEmailSend } from './types';
+import type { IEmailSend } from './types';
 
 export const sendEmail = async (payload: IEmailSend) => {
   console.log('Sending email to:');

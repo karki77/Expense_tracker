@@ -2,7 +2,21 @@ import { z } from 'zod';
 
 export const registerUserSchema = z
   .object({
-    name: z.string().min(1, { message: 'Name is required' }),
+    firstname: z
+      .string({
+        required_error: 'firstname is required',
+        invalid_type_error: 'firstname must be a string',
+      })
+      .toLowerCase()
+      .min(1, { message: 'firstname must be at least of 1 character' }),
+    lastname: z
+      .string({
+        required_error: 'lastname is required',
+        invalid_type_error: 'lastname must be a string',
+      })
+      .toLowerCase()
+      .min(1, { message: 'lastname must be at least of 1 character' }),
+
     username: z
       .string({
         required_error: 'Username is required',
@@ -39,4 +53,16 @@ export const registerUserSchema = z
     message: 'Extra fields are not allowed in the registration data',
   });
 
+export const verifyEmailQuerySchema = z
+  .object({
+    token: z.string({
+      required_error: 'Verification token is required',
+      invalid_type_error: 'Verification token must be a string',
+    }),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the verification data',
+  });
+
 export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
+export type IVerifyEmailQuerySchema = z.infer<typeof verifyEmailQuerySchema>;
