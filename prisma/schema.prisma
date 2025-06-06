@@ -8,6 +8,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// nestjs
+enum Period {
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
 model User {
   id                      String    @id @default(uuid())
   email                   String    @unique
@@ -67,9 +74,9 @@ model Expense {
   updatedAt             DateTime  @updatedAt
   userId                String
   categoryId            String
-  receipt               String?   // URL or path to receipt image
+  receiptUrl            String?   // URL or path to receipt image
   isRecurring           Boolean   @default(false)
-  recurringInterval     String? // 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'
+  recurringInterval     Period // 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   category    Category  @relation(fields: [categoryId], references: [id])
   
@@ -102,7 +109,7 @@ model Budget {
   userId                String
   categoryId            String
   isRecurring           Boolean   @default(false)
-  period                String    // 'WEEKLY', 'MONTHLY', 'YEARLY'
+  period                Period
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   category              Category  @relation(fields: [categoryId], references: [id])
   

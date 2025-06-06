@@ -1,8 +1,15 @@
-import express, { static as serveStatic } from 'express';
-import { PrismaClient } from '@prisma/client';
-import config from './config/setup/envConfig';
 import path from 'path';
+import { PrismaClient } from '@prisma/client';
+import express, { static as serveStatic } from 'express';
+
+import config from './config/setup/envConfig';
 import { logger, morganLogger } from './utils/logger';
+
+// type
+
+// utilty
+
+// validatator
 
 const prisma = new PrismaClient();
 const PORT = config.server.port || 7000;
