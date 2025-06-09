@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '../../utils/api/httpResponse';
-import { IRegisterUserSchema } from './validation';
+import {
+  IRegisterUserSchema,
+  IVerifyEmailQuerySchema,
+  ILoginUserSchema,
+} from './validation';
 import AuthService from './authService';
 import { IPaginationSchema } from '../../utils/validators/commonValidation';
 
-export class UserController {
-  private userService = AuthService;
+export class AuthController {
+  private authService = AuthService;
 
   /**
    * Register User
@@ -16,7 +20,7 @@ export class UserController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const user = await this.userService.registerUser(req.body);
+      const user = await this.authService.registerUser(req.body);
       const filteredUsers = {
         id: user.id,
         firstname: user.firstname,
@@ -33,6 +37,49 @@ export class UserController {
       next(error);
     }
   }
-}
 
-export default new UserController();
+  /**
+   * Verify Email
+   */
+  public async verifyEmail(
+    req: Request<unknown, unknown, unknown, IVerifyEmailQuerySchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      // Extract token from query
+      const { token } = req.query;
+      await this.authService.verifyEmail({ token });
+
+      res.send(
+        new HttpResponse({
+          message: 'Email verified successfully',
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Login User
+   */
+  public async loginUser(
+    req: Request<unknown, unknown, ILoginUserSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const response = await this.authService.loginUser(req.body);
+      res.send(
+        new HttpResponse({
+          message: 'Login successful',
+          data: response,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+export default new AuthController();

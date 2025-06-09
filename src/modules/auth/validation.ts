@@ -64,5 +64,17 @@ export const verifyEmailQuerySchema = z
     message: 'Extra fields are not allowed in the verification data',
   });
 
+export const loginUserSchema = z
+  .object({
+    email: z.string().toLowerCase().email({ message: 'Invalid email address' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters long' }),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the login data',
+  });
+
 export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
 export type IVerifyEmailQuerySchema = z.infer<typeof verifyEmailQuerySchema>;
+export type ILoginUserSchema = z.infer<typeof loginUserSchema>;

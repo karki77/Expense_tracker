@@ -1,9 +1,10 @@
 // services/email.templates.ts
 import { sendEmail } from './service';
+import { generateVerificationLink } from './linkGenerator';
 import type { User } from '@prisma/client'; // Or your custom user type
 
 export const sendVerificationEmail = (user: User, token: string) => {
-  const link = `http://localhost:7000/api/v2/user/verify-email?token=${token}`;
+  const link = generateVerificationLink(token);
   return sendEmail({
     to: user.email,
     subject: 'Email Verification',

@@ -5,22 +5,16 @@ import nodemailer from 'nodemailer';
 import type { IEmailSend } from './types';
 
 export const sendEmail = async (payload: IEmailSend) => {
-  console.log('Sending email to:');
   try {
     const transporter = nodemailer.createTransport({
       host: 'sandbox.smtp.mailtrap.io',
       port: 2525,
       secure: false,
-
       auth: {
         user: process.env.MAILTRAP_USER,
         pass: process.env.MAILTRAP_PASS,
       },
     });
-
-    // Verify connection before sending
-    await transporter.verify();
-    console.log('Mailtrap connection verified successfully');
 
     const mailOptions = {
       from: 'expensetracker1029@gmail.com',

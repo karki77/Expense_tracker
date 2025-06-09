@@ -1,8 +1,13 @@
-import { IRegisterUserSchema, IVerifyEmailQuerySchema } from './validation';
+import {
+  IRegisterUserSchema,
+  IVerifyEmailQuerySchema,
+  ILoginUserSchema,
+} from './validation';
 import HttpException from '../../utils/api/httpException';
 import { generateVerificationLink } from '../../utils/email/linkGenerator';
 import { sendVerificationEmail } from '../../utils/email/verificationEmail';
-import { hashPassword } from '../../utils/password/hash';
+import { generateToken } from '../../middleware/authMiddleware';
+import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
 import { prisma } from '../../config/setup/dbSetup';
 /**
@@ -81,6 +86,34 @@ class AuthService {
         verificationTokenExpires: null,
       },
     });
+  }
+
+  /**
+   * Login User
+   */
+  async loginUser(data: ILoginUserSchema) {
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (!user) {
+      throw new HttpException(400, 'Invalid email or password');
+    }
+    const isPasswordValid = await verifyPassword({
+      hashedPassword: user.password,
+      password: data.password,
+    });
+    if (!isPasswordValid) {
+      throw new HttpException(401, 'Invalid email or password');
+    }
+    const { accessToken, refreshToken } = generateToken(user);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      accessToken,
+      refreshToken,
+    };
   }
 }
 
