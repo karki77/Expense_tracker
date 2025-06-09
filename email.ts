@@ -1,4 +1,4 @@
-import HttpException from '#utils/api/httpException';
+import HttpException from './src/utils/api/httpException';
 import nodemailer from 'nodemailer';
 const transporter = nodemailer.createTransport({
   service: 'gmail',

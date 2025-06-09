@@ -27,6 +27,6 @@
     },
     "composite": true //optional: for monorepos or incremental compilation
   },
-  "include": ["src/**/*"], //Correct: Includes all TS files in src
+  "include": ["src/**/*", "email.ts"], //Correct: Includes all TS files in src
   "exclude": ["dist", "node_modules"] //Correct: Excludes dist and node_modules
 }

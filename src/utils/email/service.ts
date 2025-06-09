@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from 'nodemailer';
+
 import type { IEmailSend } from './types';
 
 export const sendEmail = async (payload: IEmailSend) => {
@@ -6,17 +9,21 @@ export const sendEmail = async (payload: IEmailSend) => {
   try {
     const transporter = nodemailer.createTransport({
       host: 'sandbox.smtp.mailtrap.io',
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      port: 2525,
+      secure: false,
 
       auth: {
-        user: '3cac6fe40e5bba', // generated ethereal user
-        pass: '69fd33c9d9a55b', // NOT your Gmail password!  // please generate own app password via gmail
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
       },
     });
 
+    // Verify connection before sending
+    await transporter.verify();
+    console.log('Mailtrap connection verified successfully');
+
     const mailOptions = {
-      from: 'courseplatform.noreply@gmail.com',
+      from: 'expensetracker1029@gmail.com',
       to: payload.to,
       subject: payload.subject,
       text: payload.text,

@@ -1,8 +1,8 @@
 import { IRegisterUserSchema, IVerifyEmailQuerySchema } from './validation';
 import HttpException from '../../utils/api/httpException';
-import { sendEmail } from '../../utils/email/service';
-import { generateToken } from '../../middleware/authMiddleware';
-import { hashPassword, verifyPassword } from '../../utils/password/hash';
+import { generateVerificationLink } from '../../utils/email/linkGenerator';
+import { sendVerificationEmail } from '../../utils/email/verificationEmail';
+import { hashPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
 import { prisma } from '../../config/setup/dbSetup';
 /**
@@ -50,14 +50,9 @@ class AuthService {
       },
     });
     //Update verification link to use token
-    const verificationLink = `http://localhost:7000/api/v2/user/verify-email?token=${verificationToken}`;
-
-    await sendEmail({
-      to: user.email,
-      subject: 'Email Verification',
-      text: `Hello ${user.username}, please verify your email by clicking on the following link: ${verificationLink}`,
-      html: `<h1>Email Verification</h1><p>Hello ${user.username}, please verify your email by clicking on the following link: <a href="${verificationLink}">Verify Email</a></p>`,
-    });
+    //const verificationLink = `http://localhost:7000/api/v2/user/verify-email?token=${verificationToken}`;
+    const verificationLink = generateVerificationLink(verificationToken);
+    await sendVerificationEmail(user.email, user.username, verificationLink);
     return user;
   }
   async verifyEmail(query: IVerifyEmailQuerySchema) {

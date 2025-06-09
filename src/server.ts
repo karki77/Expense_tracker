@@ -1,6 +1,7 @@
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import express, { static as serveStatic } from 'express';
+import dotenv from 'dotenv';
 
 import config from './config/setup/envConfig';
 import { logger, morganLogger } from './utils/logger';
