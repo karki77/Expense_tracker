@@ -3,10 +3,13 @@ import {
   IVerifyEmailQuerySchema,
   ILoginUserSchema,
   IChangePasswordSchema,
+  IForgotPasswordSchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
 import { generateVerificationLink } from '../../utils/email/linkGenerator';
+import { generatePasswordResetLink } from './passwordResetLink';
 import { sendVerificationEmail } from '../../utils/email/verificationEmail';
+import { sendPasswordResetEmail } from '../../utils/email/passwordResetEmail';
 import { generateToken } from '../../middleware/authMiddleware';
 import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
@@ -147,6 +150,32 @@ class AuthService {
         password: hashedPassword,
       },
     });
+  }
+
+  /**
+   * Forget Password
+   */
+  async requestPasswordReset(data: IForgotPasswordSchema) {
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (!user) {
+      throw new HttpException(400, 'User not found');
+    }
+    const resetToken = randomBytes(32).toString('hex');
+    const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
+    //save token to db
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken: resetToken,
+        resetTokenExpires: resetTokenExpires,
+      },
+    });
+
+    const resetLink = generatePasswordResetLink(resetToken);
+    await sendPasswordResetEmail(user.email, user.username, resetLink);
   }
 }
 export default new AuthService();

@@ -6,6 +6,8 @@ import {
   verifyEmailQuerySchema,
   loginUserSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  tokenSchema,
 } from './validation';
 import authController from './authController';
 import { authMiddleware } from '../../middleware/authMiddleware';
@@ -35,6 +37,12 @@ authrouter.patch(
   authMiddleware,
   bodyValidator(changePasswordSchema),
   authController.changePassword.bind(authController),
+);
+
+authrouter.post(
+  '/forgot-password',
+  bodyValidator(forgotPasswordSchema),
+  authController.requestPasswordReset.bind(authController),
 );
 
 export default authrouter;

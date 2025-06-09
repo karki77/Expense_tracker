@@ -92,7 +92,32 @@ export const changePasswordSchema = z
     message: 'Extra fields are not allowed in the change password data',
   });
 
+export const forgotPasswordSchema = z
+  .object({
+    email: z.string().email('Invalid email format'),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the forget password data',
+  });
+
+export const tokenSchema = z
+  .object({
+    token: z
+      .string({
+        required_error: 'Token is required',
+        invalid_type_error: 'Token must be a string',
+      })
+      .min(1, {
+        message: 'Token must be at least 1 character long',
+      }),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the reset password data',
+  });
+
 export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
 export type IVerifyEmailQuerySchema = z.infer<typeof verifyEmailQuerySchema>;
 export type ILoginUserSchema = z.infer<typeof loginUserSchema>;
 export type IChangePasswordSchema = z.infer<typeof changePasswordSchema>;
+export type IForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ITokenSchema = z.infer<typeof tokenSchema>;

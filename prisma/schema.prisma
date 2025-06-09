@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -28,6 +27,8 @@ model User {
   isVerified              Boolean   @default(false)
   verificationToken       String?
   verificationTokenExpires DateTime?
+  resetToken              String?
+  resetTokenExpires       DateTime?
   refreshToken            String?
   expenses                Expense[]
   budgets                 Budget[]

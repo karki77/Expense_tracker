@@ -6,6 +6,7 @@ import {
   IVerifyEmailQuerySchema,
   ILoginUserSchema,
   IChangePasswordSchema,
+  IForgotPasswordSchema,
 } from './validation';
 import AuthService from './authService';
 import { IPaginationSchema } from '../../utils/validators/commonValidation';
@@ -101,6 +102,26 @@ export class AuthController {
       res.send(
         new HttpResponse({
           message: 'Password changed successfully',
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Forget Password
+   */
+  public async requestPasswordReset(
+    req: Request<unknown, unknown, IForgotPasswordSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      await this.authService.requestPasswordReset(req.body);
+      res.send(
+        new HttpResponse({
+          message: 'Password reset email sent successfully',
         }),
       );
     } catch (error) {
