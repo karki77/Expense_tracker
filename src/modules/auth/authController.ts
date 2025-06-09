@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '../../utils/api/httpResponse';
+import HttpException from '../../utils/api/httpException';
 import {
   IRegisterUserSchema,
   IVerifyEmailQuerySchema,
   ILoginUserSchema,
+  IChangePasswordSchema,
 } from './validation';
 import AuthService from './authService';
 import { IPaginationSchema } from '../../utils/validators/commonValidation';
@@ -75,6 +77,30 @@ export class AuthController {
         new HttpResponse({
           message: 'Login successful',
           data: response,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Change Password
+   */
+  public async changePassword(
+    req: Request<unknown, unknown, IChangePasswordSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new HttpException(401, 'User not authenticated');
+      }
+      await this.authService.changePassword(userId, req.body);
+      res.send(
+        new HttpResponse({
+          message: 'Password changed successfully',
         }),
       );
     } catch (error) {

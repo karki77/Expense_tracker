@@ -5,8 +5,10 @@ import {
   registerUserSchema,
   verifyEmailQuerySchema,
   loginUserSchema,
+  changePasswordSchema,
 } from './validation';
 import authController from './authController';
+import { authMiddleware } from '../../middleware/authMiddleware';
 
 const authrouter = Router();
 
@@ -26,6 +28,13 @@ authrouter.post(
   '/login',
   bodyValidator(loginUserSchema),
   authController.loginUser.bind(authController),
+);
+
+authrouter.patch(
+  '/change-password',
+  authMiddleware,
+  bodyValidator(changePasswordSchema),
+  authController.changePassword.bind(authController),
 );
 
 export default authrouter;

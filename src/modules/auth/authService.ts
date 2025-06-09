@@ -2,6 +2,7 @@ import {
   IRegisterUserSchema,
   IVerifyEmailQuerySchema,
   ILoginUserSchema,
+  IChangePasswordSchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
 import { generateVerificationLink } from '../../utils/email/linkGenerator';
@@ -98,10 +99,7 @@ class AuthService {
     if (!user) {
       throw new HttpException(400, 'Invalid email or password');
     }
-    const isPasswordValid = await verifyPassword({
-      hashedPassword: user.password,
-      password: data.password,
-    });
+    const isPasswordValid = await verifyPassword(user.password, data.password);
     if (!isPasswordValid) {
       throw new HttpException(401, 'Invalid email or password');
     }
@@ -115,6 +113,40 @@ class AuthService {
       refreshToken,
     };
   }
-}
+  /**
+   * Change Password
+   */
 
+  async changePassword(userId: string, data: IChangePasswordSchema) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new HttpException(400, 'User not found');
+    }
+    const isOldPasswordValid = await verifyPassword(
+      user.password,
+      data.oldPassword,
+    );
+    if (!isOldPasswordValid) {
+      throw new HttpException(401, 'Invalid old password');
+    }
+    //check if old password is the same as the new password
+    if (data.oldPassword === data.newPassword) {
+      throw new HttpException(
+        400,
+        'New password cannot be the same as the old password',
+      );
+    }
+    //hash the new password
+    const hashedPassword = await hashPassword(data.newPassword);
+    //update the user password in db
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+      },
+    });
+  }
+}
 export default new AuthService();

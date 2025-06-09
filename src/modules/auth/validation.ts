@@ -75,6 +75,24 @@ export const loginUserSchema = z
     message: 'Extra fields are not allowed in the login data',
   });
 
+export const changePasswordSchema = z
+  .object({
+    oldPassword: z
+      .string()
+      .min(8, { message: 'Old password must be at least 8 characters long' }),
+    newPassword: z
+      .string({ required_error: 'New password is required' })
+      .min(8, { message: 'New password must be at least 8 characters long' })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, {
+        message:
+          'New password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
+      }),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the change password data',
+  });
+
 export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
 export type IVerifyEmailQuerySchema = z.infer<typeof verifyEmailQuerySchema>;
 export type ILoginUserSchema = z.infer<typeof loginUserSchema>;
+export type IChangePasswordSchema = z.infer<typeof changePasswordSchema>;

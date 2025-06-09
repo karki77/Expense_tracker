@@ -10,17 +10,13 @@ export const hashPassword = async (password: string) => {
   }
 };
 
-export const verifyPassword = async ({
-  hashedPassword,
-  password,
-}: {
-  hashedPassword: string;
-  password: string;
-}) => {
+export const verifyPassword = async (
+  hashedPassword: string,
+  password: string,
+): Promise<boolean> => {
   try {
-    const isPasswordValid = await argon2.verify(hashedPassword, password);
-    return isPasswordValid;
-  } catch (error) {
+    return await argon2.verify(hashedPassword, password);
+  } catch {
     throw new HttpException(400, 'Error verifying password');
   }
 };
