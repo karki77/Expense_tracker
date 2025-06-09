@@ -8,6 +8,7 @@ import {
   changePasswordSchema,
   forgotPasswordSchema,
   tokenSchema,
+  resetPasswordSchema,
 } from './validation';
 import authController from './authController';
 import { authMiddleware } from '../../middleware/authMiddleware';
@@ -43,6 +44,13 @@ authrouter.post(
   '/forgot-password',
   bodyValidator(forgotPasswordSchema),
   authController.requestPasswordReset.bind(authController),
+);
+
+authrouter.post(
+  '/reset-password',
+  queryValidator(tokenSchema),
+  bodyValidator(resetPasswordSchema),
+  authController.resetPassword.bind(authController),
 );
 
 export default authrouter;

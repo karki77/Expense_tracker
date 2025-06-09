@@ -115,9 +115,28 @@ export const tokenSchema = z
     message: 'Extra fields are not allowed in the reset password data',
   });
 
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string({
+        required_error: 'Password is required',
+        invalid_type_error: 'Password should be string',
+      })
+      .min(6, 'Password can not be less than 6 character')
+      .max(20, 'Password can not be more than 20 character')
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, {
+        message:
+          'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
+      }),
+  })
+  .strict({
+    message: 'Extra fields are not allowed in the reset password data',
+  });
+
 export type IRegisterUserSchema = z.infer<typeof registerUserSchema>;
 export type IVerifyEmailQuerySchema = z.infer<typeof verifyEmailQuerySchema>;
 export type ILoginUserSchema = z.infer<typeof loginUserSchema>;
 export type IChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 export type IForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ITokenSchema = z.infer<typeof tokenSchema>;
+export type IResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

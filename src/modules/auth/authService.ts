@@ -10,6 +10,7 @@ import { generateVerificationLink } from '../../utils/email/linkGenerator';
 import { generatePasswordResetLink } from './passwordResetLink';
 import { sendVerificationEmail } from '../../utils/email/verificationEmail';
 import { sendPasswordResetEmail } from '../../utils/email/passwordResetEmail';
+import { sendPasswordResetConfirmationEmail } from '../../utils/email/passwordResetConfirm';
 import { generateToken } from '../../middleware/authMiddleware';
 import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
@@ -176,6 +177,32 @@ class AuthService {
 
     const resetLink = generatePasswordResetLink(resetToken);
     await sendPasswordResetEmail(user.email, user.username, resetLink);
+  }
+  /**
+   * Reset Password
+   */
+  async resetPassword(token: string, password: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: token,
+        resetTokenExpires: {
+          gte: new Date(),
+        },
+      },
+    });
+    if (!user) {
+      throw new HttpException(400, 'Invalid or expired reset token.');
+    }
+    const hashedPassword = await hashPassword(password);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpires: null,
+      },
+    });
+    await sendPasswordResetConfirmationEmail(user.email, user.username);
   }
 }
 export default new AuthService();
