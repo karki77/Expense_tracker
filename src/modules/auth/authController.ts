@@ -11,7 +11,6 @@ import {
   ITokenSchema,
 } from './validation';
 import AuthService from './authService';
-import { IPaginationSchema } from '../../utils/validators/commonValidation';
 
 export class AuthController {
   private authService = AuthService;
