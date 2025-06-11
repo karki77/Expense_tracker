@@ -1,0 +1,8 @@
+{
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.screenReaderAnnounceInlineSuggestion": true,
+    "editor.inlineSuggest.edits.experimental.enabled": true,
+    "editor.inlineSuggest.edits.experimental.onlyShowWhenCloseToCursor": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.inlineSuggest.syntaxHighlightingEnabled": true
+}

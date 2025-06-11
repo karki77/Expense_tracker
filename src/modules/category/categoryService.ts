@@ -3,19 +3,28 @@ import HttpException from '../../utils/api/httpException';
 import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
 
 class CategoryService {
-  async _getCategoryById(userId: string, categoryId: string) {
+  /**
+   * Get a category by id
+   */
+  async _getCategoryById(categoryId: string, userId: string) {
     const category = await prisma.category.findFirst({
       where: {
         userId,
         id: categoryId,
       },
     });
+
     if (!category) {
       throw new HttpException(404, 'Category not found');
     }
+
+    //
     return category;
   }
 
+  /**
+   * Create a category
+   */
   async createCategory(data: ICreateCategorySchema, userId: string) {
     // Check if category with same name exists
     const existingCategory = await prisma.category.findFirst({
@@ -37,16 +46,19 @@ class CategoryService {
         userId,
       },
     });
-    return {
-      data: newCategory,
-    };
+
+    //
+    return newCategory;
   }
+  /**
+   * Update a category
+   */
   async updateCategory(
     userId: string,
     categoryId: string,
     data: IUpdateCategoryDataSchema,
   ) {
-    await this._getCategoryById(userId, categoryId);
+    await this._getCategoryById(categoryId, userId);
     const existingCategory = await prisma.category.findFirst({
       where: {
         name: data.name,
@@ -72,8 +84,8 @@ class CategoryService {
   /**
    * Delete a category
    */
-  async deleteCategory(userId: string, categoryId: string) {
-    await this._getCategoryById(userId, categoryId);
+  async deleteCategory(categoryId: string, userId: string) {
+    await this._getCategoryById(categoryId, userId);
     await prisma.category.delete({
       where: {
         id: categoryId,

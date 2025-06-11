@@ -5,6 +5,34 @@ import { HttpResponse } from '../../utils/api/httpResponse';
 import HttpException from '../../utils/api/httpException';
 
 class CategoryController {
+  private categoryService = CategoryService;
+
+  /**
+   * Get category by Id
+   */
+  public async getCategoryById(
+    req: Request<{ categoryId: string }>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const categoryId = req.params.categoryId;
+      const category = await this.categoryService._getCategoryById(
+        categoryId,
+        userId,
+      );
+      res.send(
+        new HttpResponse({
+          message: 'Category retrieved successfully',
+          data: category,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * Create a new category
    */
@@ -18,7 +46,7 @@ class CategoryController {
 
       const userId = req.user.id;
 
-      const response = await CategoryService.createCategory(
+      const response = await this.categoryService.createCategory(
         { name, description },
         userId,
       );
@@ -26,7 +54,7 @@ class CategoryController {
       res.send(
         new HttpResponse({
           message: 'Category created successfully',
-          data: response.data,
+          data: response,
         }),
       );
     } catch (error) {
@@ -47,7 +75,7 @@ class CategoryController {
         throw new HttpException(401, 'User is not authenticated');
       }
       const categoryId = req.params.categoryId;
-      const response = await CategoryService.updateCategory(
+      const response = await this.categoryService.updateCategory(
         userId,
         categoryId,
         req.body,
@@ -76,7 +104,7 @@ class CategoryController {
         throw new HttpException(401, 'User is not authenticated');
       }
       const categoryId = req.params.categoryId;
-      await CategoryService.deleteCategory(userId, categoryId);
+      await this.categoryService.deleteCategory(categoryId, userId);
       res.send(
         new HttpResponse({
           message: 'Category deleted successfully',

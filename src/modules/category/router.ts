@@ -15,7 +15,7 @@ categoryRouter.post(
   '/create',
   authMiddleware,
   bodyValidator(createCategorySchema),
-  CategoryController.createCategory,
+  CategoryController.createCategory.bind(CategoryController),
 );
 
 categoryRouter.patch(
@@ -23,14 +23,21 @@ categoryRouter.patch(
   authMiddleware,
   paramValidator(categoryParamSchema),
   bodyValidator(updateCategoryDataSchema),
-  CategoryController.updateCategory,
+  CategoryController.updateCategory.bind(CategoryController),
 );
 
 categoryRouter.delete(
   '/delete/:categoryId',
   authMiddleware,
   paramValidator(categoryParamSchema),
-  CategoryController.deleteCategory,
+  CategoryController.deleteCategory.bind(CategoryController),
+);
+
+categoryRouter.get(
+  '/:categoryId',
+  authMiddleware,
+  paramValidator(categoryParamSchema),
+  CategoryController.getCategoryById.bind(CategoryController),
 );
 
 export default categoryRouter;

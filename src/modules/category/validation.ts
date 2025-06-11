@@ -37,10 +37,13 @@ export const updateCategoryDataSchema = z
       .trim()
       .optional(),
     description: z
-      .string()
+      .string({
+        required_error: 'Description is required',
+        invalid_type_error: 'Description should be string',
+      })
+      .trim()
       .max(200, 'Description must be less than 200 characters')
-      .optional()
-      .transform((val) => val?.trim() || undefined),
+      .optional(),
   })
   .strict({
     message: 'Extra fields are not allowed in the request body',
