@@ -1,7 +1,21 @@
 import { prisma } from '../../config/setup/dbSetup';
-import { ICreateCategorySchema } from './validation';
+import HttpException from '../../utils/api/httpException';
+import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
 
 class CategoryService {
+  async _getCategoryById(userId: string, categoryId: string) {
+    const category = await prisma.category.findFirst({
+      where: {
+        userId,
+        id: categoryId,
+      },
+    });
+    if (!category) {
+      throw new HttpException(404, 'Category not found');
+    }
+    return category;
+  }
+
   async createCategory(data: ICreateCategorySchema, userId: string) {
     // Check if category with same name exists
     const existingCategory = await prisma.category.findFirst({
@@ -12,10 +26,7 @@ class CategoryService {
     });
 
     if (existingCategory) {
-      return {
-        success: false,
-        error: 'Category with this name already exists',
-      };
+      throw new HttpException(400, 'Category with this name already exists');
     }
 
     // Create new category
@@ -26,39 +37,37 @@ class CategoryService {
         userId,
       },
     });
-
     return {
       data: newCategory,
     };
   }
+  async updateCategory(
+    userId: string,
+    categoryId: string,
+    data: IUpdateCategoryDataSchema,
+  ) {
+    await this._getCategoryById(userId, categoryId);
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        name: data.name,
+        userId,
+        NOT: {
+          id: categoryId,
+        },
+      },
+    });
+    if (existingCategory) {
+      throw new HttpException(400, 'Category with this name already exists');
+    }
+    const updatedCategory = await prisma.category.update({
+      where: { id: categoryId },
+      data: {
+        ...data,
+      },
+    });
+    return {
+      data: updatedCategory,
+    };
+  }
 }
-
 export default new CategoryService();
-
-// return // throw
-
-// #1
-/**
- *
- * id ,
- * return
- * name = ram
- * console.log(ram);
- */
-
-// ram
-
-// #1: reason:
-
-// #2
-/**
- * id,
- * !id
- * throw (id is required)
- * name = shyam
- * console.log(name)
- */
-
-// id is required
-
-// #2 : reason : throw paxi jadaina.
