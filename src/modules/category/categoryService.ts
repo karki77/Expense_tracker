@@ -69,5 +69,16 @@ class CategoryService {
       data: updatedCategory,
     };
   }
+  /**
+   * Delete a category
+   */
+  async deleteCategory(userId: string, categoryId: string) {
+    await this._getCategoryById(userId, categoryId);
+    await prisma.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
+  }
 }
 export default new CategoryService();

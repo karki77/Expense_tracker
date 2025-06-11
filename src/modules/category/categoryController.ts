@@ -62,5 +62,29 @@ class CategoryController {
       next(error);
     }
   }
+  /**
+   * Delete a category
+   */
+  public async deleteCategory(
+    req: Request<{ categoryId: string }>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new HttpException(401, 'User is not authenticated');
+      }
+      const categoryId = req.params.categoryId;
+      await CategoryService.deleteCategory(userId, categoryId);
+      res.send(
+        new HttpResponse({
+          message: 'Category deleted successfully',
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default new CategoryController();

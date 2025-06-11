@@ -26,4 +26,11 @@ categoryRouter.patch(
   CategoryController.updateCategory,
 );
 
+categoryRouter.delete(
+  '/delete/:categoryId',
+  authMiddleware,
+  paramValidator(categoryParamSchema),
+  CategoryController.deleteCategory,
+);
+
 export default categoryRouter;
