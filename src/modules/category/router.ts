@@ -6,7 +6,7 @@ import {
   updateCategoryDataSchema,
   categoryParamSchema,
 } from './validation';
-import CategoryController from './categoryController';
+import CategoryController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
 
 const categoryRouter = Router();

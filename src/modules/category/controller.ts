@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
-import CategoryService from './categoryService';
+import {
+  ICategoryParamSchema,
+  ICreateCategorySchema,
+  IUpdateCategoryDataSchema,
+} from './validation';
+import CategoryService from './service';
 import { HttpResponse } from '../../utils/api/httpResponse';
 import HttpException from '../../utils/api/httpException';
 
@@ -11,7 +15,7 @@ class CategoryController {
    * Get category by Id
    */
   public async getCategoryById(
-    req: Request<{ categoryId: string }>,
+    req: Request<{ categoryId: string }, unknown, ICategoryParamSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {

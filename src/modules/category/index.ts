@@ -1,4 +1,4 @@
-import categoryService from './categoryService';
-import categoryController from './categoryController';
+import categoryService from './service';
+import categoryController from './controller';
 
 export { categoryService, categoryController };

@@ -1,4 +1,4 @@
-import AuthService from './authService';
-import authController from './authController';
+import AuthService from './service';
+import authController from './controller';
 
 export { AuthService, authController };

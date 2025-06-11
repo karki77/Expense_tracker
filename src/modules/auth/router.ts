@@ -10,7 +10,7 @@ import {
   tokenSchema,
   resetPasswordSchema,
 } from './validation';
-import authController from './authController';
+import authController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
 
 const authrouter = Router();

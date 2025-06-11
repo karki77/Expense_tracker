@@ -10,7 +10,7 @@ import {
   IResetPasswordSchema,
   ITokenSchema,
 } from './validation';
-import AuthService from './authService';
+import AuthService from './service';
 
 export class AuthController {
   private authService = AuthService;
