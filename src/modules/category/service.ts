@@ -26,10 +26,12 @@ class CategoryService {
    */
   async createCategory(data: ICreateCategorySchema, userId: string) {
     // Check if category with same name exists
-    const existingCategory = await prisma.category.findFirst({
+    const existingCategory = await prisma.category.findUnique({
       where: {
-        userId,
-        name: data.name,
+        name_userId: {
+          name: data.name,
+          userId,
+        },
       },
     });
 

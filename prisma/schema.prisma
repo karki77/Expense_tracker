@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// nestjs
 enum Period {
   WEEKLY
   MONTHLY
@@ -15,110 +14,101 @@ enum Period {
 }
 
 model User {
-  id                      String    @id @default(uuid())
-  email                   String    @unique
-  firstname               String
-  lastname                String
-  username                String    @unique
-  password                String
-  profile                 String?
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  isVerified              Boolean   @default(false)
-  verificationToken       String?
-  verificationTokenExpires DateTime?
-  resetToken              String?
-  resetTokenExpires       DateTime?
-  refreshToken            String?
-  expenses                Expense[]
-  budgets                 Budget[]
-  categories              Category[]
-  userProfile             Profile?
+  id                        String     @id @default(uuid())
+  email                     String     @unique
+  firstname                 String
+  lastname                  String
+  username                  String     @unique
+  password                  String
+  profile                   String?
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+  isVerified                Boolean    @default(false)
+  verificationToken         String?
+  verificationTokenExpires  DateTime?
+  resetToken                String?
+  resetTokenExpires         DateTime?
+  refreshToken              String?
+  expenses                  Expense[]
+  budgets                   Budget[]
+  categories                Category[]
+  userProfile               Profile?
 
   @@map("users")
 }
 
 model Profile {
-  id                      String    @id @default(uuid())
-  userId                  String    @unique
-  firstname               String
-  lastname                String
-  username                String    @unique
-  image                   String
-  // Basic Financial Summary
-  totalExpenses           Float     @default(0)
-  totalBudget             Float     @default(0)
-  currentBalance          Float     @default(0)   //totalBudget - totalExpenses
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  firstname         String
+  lastname          String
+  username          String   @unique
+  image             String
+  totalExpenses     Float    @default(0)
+  totalBudget       Float    @default(0)
+  currentBalance    Float    @default(0)
+  monthlyExpenses   Float    @default(0)
+  monthlyBudget     Float    @default(0)
+  monthlyBalance    Float    @default(0)
+  isOverBudget      Boolean  @default(false)
+  isUnderBudget     Boolean  @default(false)
+  isOnBudget        Boolean  @default(false)
+  topExpenses       Json?
 
-  // This Month's Summary
-  monthlyExpenses         Float     @default(0)
-  monthlyBudget           Float     @default(0)
-  monthlyBalance          Float     @default(0)   //monthlyBudget - monthlyExpenses
-
-  // Status
-  isOverBudget            Boolean   @default(false)
-  isUnderBudget           Boolean   @default(false)
-  isOnBudget              Boolean   @default(false)
-
-  // Top Expenses
-  topExpenses    Json?     // Array of {name: string, amount: number}
-
-  // Top Categories
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
-
 }
 
 model Expense {
-  id                    String    @id @default(uuid())
-  name                  String
-  amount                Float
-  description           String?
-  date                  DateTime  @default(now())
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  userId                String
-  categoryId            String
-  isRecurring           Boolean   @default(false)
-  recurringInterval     Period // 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'
+  id          String    @id @default(uuid())
+  name        String
+  amount      Float
+  description String?
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  categoryId  String
+
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   category    Category  @relation(fields: [categoryId], references: [id])
-  
 
   @@map("expenses")
 }
 
-model Category {  
-  id                    String    @id @default(uuid())
-  name                  String
-  description           String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expenses              Expense[]
-  budgets               Budget[]
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  color       String?   // Optional field to improve UI differentiation
+  icon        String?   // Optional for visual representation
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses    Expense[]
+  budgets     Budget[]
 
   @@unique([name, userId])
   @@map("categories")
 }
 
 model Budget {
-  id                    String    @id @default(uuid())
-  amount                Float
-  startDate             DateTime
-  endDate               DateTime
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  userId                String
-  categoryId            String
-  isRecurring           Boolean   @default(false)
-  period                Period
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category              Category  @relation(fields: [categoryId], references: [id])
-  
+  id            String    @id @default(uuid())
+  amount        Float
+  startDate     DateTime
+  endDate       DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  categoryId    String
+  isRecurring   Boolean   @default(false)
+  period        Period
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category  @relation(fields: [categoryId], references: [id])
 
   @@map("budgets")
-} 
+}

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const createExpenseSchema = z
+export const addExpenseSchema = z
   .object({
     name: z
       .string({ required_error: 'Name is required' })
@@ -11,7 +11,7 @@ export const createExpenseSchema = z
 
     date: z.string({ required_error: 'Date is required' }),
 
-    category: z.string({ required_error: 'Category is required' }),
+    categoryId: z.string({ required_error: 'CategoryId is required' }),
 
     description: z
       .string({ required_error: 'Description is required' })
@@ -22,4 +22,11 @@ export const createExpenseSchema = z
     message: 'All fields are required, no missing fields accepted',
   });
 
-export type ICreateExpenseSchema = z.infer<typeof createExpenseSchema>;
+export const getExpenseByIdSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('Invalid expense ID'),
+  }),
+});
+
+export type IAddExpenseSchema = z.infer<typeof addExpenseSchema>;
+export type IGetExpenseByIdSchema = z.infer<typeof getExpenseByIdSchema>;

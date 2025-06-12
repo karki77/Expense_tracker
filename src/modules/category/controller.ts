@@ -16,7 +16,7 @@ class CategoryController {
    * Get category by Id
    */
   public async getCategoryById(
-    req: Request<{ categoryId: string }, unknown, ICategoryParamSchema>,
+    req: Request<ICategoryParamSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
