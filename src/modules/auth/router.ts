@@ -12,6 +12,7 @@ import {
 } from './validation';
 import authController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import upload from '../../utils/multer';
 
 const authrouter = Router();
 
@@ -51,6 +52,13 @@ authrouter.post(
   queryValidator(tokenSchema),
   bodyValidator(resetPasswordSchema),
   authController.resetPassword.bind(authController),
+);
+
+authrouter.post(
+  '/upload-profile-image',
+  authMiddleware,
+  upload.single('file'),
+  authController.uploadProfileImage.bind(authController),
 );
 
 export default authrouter;

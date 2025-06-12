@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '../../utils/api/httpResponse';
 import HttpException from '../../utils/api/httpException';
-import {
+import type {
   IRegisterUserSchema,
   IVerifyEmailQuerySchema,
   ILoginUserSchema,
@@ -143,6 +143,45 @@ export class AuthController {
       res.send(
         new HttpResponse({
           message: 'Password reset successfully',
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Upload Profile Image
+   */
+  public async uploadProfileImage(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new HttpException(401, 'User not authenticated');
+      }
+
+      // Check if file exists in request
+      if (!req.file) {
+        throw new HttpException(400, 'No file uploaded');
+      }
+
+      console.log('Uploaded file:', req.file);
+
+      // Just use the filename
+      const filename = req.file.filename;
+      console.log('Filename:', filename);
+
+      // Update user profile with just the filename
+      await this.authService.uploadProfileImage(userId, filename);
+
+      res.send(
+        new HttpResponse({
+          message: 'Profile image uploaded successfully',
+          data: { filename },
         }),
       );
     } catch (error) {

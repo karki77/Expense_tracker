@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import {
+import type {
   ICategoryParamSchema,
   ICreateCategorySchema,
+  IDeleteCategorySchema,
   IUpdateCategoryDataSchema,
 } from './validation';
 import CategoryService from './service';
@@ -98,7 +99,7 @@ class CategoryController {
    * Delete a category
    */
   public async deleteCategory(
-    req: Request<{ categoryId: string }>,
+    req: Request<{ categoryId: string }, unknown, IDeleteCategorySchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {

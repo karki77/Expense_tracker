@@ -18,7 +18,6 @@ class CategoryService {
       throw new HttpException(404, 'Category not found');
     }
 
-    //
     return category;
   }
 

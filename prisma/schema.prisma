@@ -81,7 +81,6 @@ model Expense {
   updatedAt             DateTime  @updatedAt
   userId                String
   categoryId            String
-  receiptUrl            String?   // URL or path to receipt image
   isRecurring           Boolean   @default(false)
   recurringInterval     Period // 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)

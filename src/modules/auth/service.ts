@@ -204,5 +204,23 @@ class AuthService {
     });
     await sendPasswordResetConfirmationEmail(user.email, user.username);
   }
+
+  async uploadProfileImage(userId: string, filename: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new HttpException(400, 'User not found');
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: filename,
+      },
+    });
+
+    return { filename };
+  }
 }
 export default new AuthService();
