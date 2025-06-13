@@ -76,11 +76,12 @@ class CategoryController {
   ): Promise<void> {
     try {
       const userId = req.user?.id;
+      const categoryId = req.params.categoryId;
       if (!userId) {
         throw new HttpException(401, 'User is not authenticated');
       }
-      const categoryId = req.params.categoryId;
-      const response = await this.categoryService.updateCategory(
+
+      const updatedCategory = await this.categoryService.updateCategory(
         userId,
         categoryId,
         req.body,
@@ -88,7 +89,7 @@ class CategoryController {
       res.send(
         new HttpResponse({
           message: 'Category updated successfully',
-          data: response.data,
+          data: updatedCategory,
         }),
       );
     } catch (error) {
@@ -105,10 +106,10 @@ class CategoryController {
   ): Promise<void> {
     try {
       const userId = req.user?.id;
+      const categoryId = req.params.categoryId;
       if (!userId) {
         throw new HttpException(401, 'User is not authenticated');
       }
-      const categoryId = req.params.categoryId;
       await this.categoryService.deleteCategory(categoryId, userId);
       res.send(
         new HttpResponse({

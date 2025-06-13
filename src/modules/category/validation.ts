@@ -3,21 +3,18 @@ import { z } from 'zod';
 export const createCategorySchema = z
   .object({
     name: z
-      .string({
-        required_error: 'Name is required',
-        invalid_type_error: 'Name must be a string',
-      })
-      .toLowerCase()
-      .min(1, { message: 'Name must be at least 1 character' })
-      .max(50, { message: 'Name must be less than 50 characters' })
-      .trim()
+      .string()
+      .min(1, 'Name is required')
+      .max(50, 'Name must be less than 50 characters')
+      .transform((val) => val.toLowerCase().trim())
       .refine(
-        (name) => name.length > 0,
+        (val) => val.length > 0,
         'Category name cannot be empty or whitespace',
       ),
+
     description: z
       .string()
-      .max(200, { message: 'Description must be less than 200 characters' })
+      .max(200, 'Description must be less than 200 characters')
       .optional()
       .transform((val) => val?.trim() || undefined),
   })

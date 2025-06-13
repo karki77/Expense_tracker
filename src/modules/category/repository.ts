@@ -35,6 +35,7 @@ export class CategoryRepository {
       },
     });
   }
+
   async findbyName(name: string, userId: string): Promise<Category | null> {
     return await this.prisma.category.findFirst({
       where: {
@@ -46,6 +47,7 @@ export class CategoryRepository {
       },
     });
   }
+
   async findByNameExcludingId(
     name: string,
     userId: string,
@@ -112,6 +114,7 @@ export class CategoryRepository {
   }
   async delete(id: string, userId: string): Promise<boolean> {
     try {
+      // get. check
       await this.prisma.category.delete({
         where: {
           id,
