@@ -1,10 +1,6 @@
 import { z } from 'zod';
 export const addExpenseSchema = z
   .object({
-    name: z
-      .string({ required_error: 'Name is required' })
-      .min(3, 'Name must be at least 3 characters long'),
-
     amount: z
       .number({ required_error: 'Amount is required' })
       .min(1, 'Amount must be at least 1'),

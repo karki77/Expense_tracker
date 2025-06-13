@@ -62,7 +62,7 @@ model Profile {
 
 model Expense {
   id          String    @id @default(uuid())
-  name        String
+  // name        String
   amount      Float
   description String?
   date        DateTime  @default(now())

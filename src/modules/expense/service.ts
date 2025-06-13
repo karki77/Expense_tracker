@@ -14,7 +14,6 @@ class ExpenseService {
     const existingExpense = await prisma.expense.findFirst({
       where: {
         userId,
-        name: data.name,
       },
     });
     if (existingExpense) {
@@ -37,7 +36,6 @@ class ExpenseService {
 
     const newExpense = await prisma.expense.create({
       data: {
-        name: data.name,
         amount: data.amount,
         date: data.date,
         description: data.description,
