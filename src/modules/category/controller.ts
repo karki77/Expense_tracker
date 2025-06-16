@@ -8,6 +8,7 @@ import type {
 import CategoryService from './service';
 import { HttpResponse } from '../../utils/api/httpResponse';
 import HttpException from '../../utils/api/httpException';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 class CategoryController {
   private categoryService = CategoryService;
@@ -31,6 +32,42 @@ class CategoryController {
         new HttpResponse({
           message: 'Category retrieved successfully',
           data: category,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
+   * Get all categories
+   */
+  public async getallCategories(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const { categories, docs } = await this.categoryService.getallCategories(
+        userId,
+        req.query as IPaginationSchema,
+      );
+      const filteredCategories = categories.map(
+        (category: {
+          id: string;
+          name: string;
+          description: string | null;
+        }) => ({
+          id: category.id,
+          name: category.name,
+          description: category.description,
+        }),
+      );
+      res.send(
+        new HttpResponse({
+          message: 'Categories retrieved successfully',
+          data: filteredCategories,
+          docs,
         }),
       );
     } catch (error) {

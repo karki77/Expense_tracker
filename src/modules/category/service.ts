@@ -2,7 +2,8 @@ import { prisma } from '../../config/setup/dbSetup';
 import HttpException from '../../utils/api/httpException';
 import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
 import { defaultCategories } from '../../config/setup/defaultCategories';
-import e from 'express';
+import { getPageDocs, pagination } from '../../utils/pagination/pagination';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 class CategoryService {
   /**
@@ -18,7 +19,6 @@ class CategoryService {
       },
       orderBy: { name: 'asc' },
     });
-
     // If no category exist, create default ones
     if (categories.length === 0 && defaultCategories.length > 0) {
       await prisma.category.createMany({
@@ -28,7 +28,6 @@ class CategoryService {
         })),
       });
     }
-
     //fetch the newly created categories
     const response = await prisma.category.findMany({
       where: { userId },
@@ -39,8 +38,58 @@ class CategoryService {
       },
       orderBy: { name: 'asc' },
     });
-
     return response;
+  }
+
+  /**
+   * Get all categories with pagination
+   */
+
+  async getallCategories(userId: string, query: IPaginationSchema) {
+    const { skip, limit, page } = pagination({
+      limit: query.limit,
+      page: query.page,
+    });
+    // If no categories exist, create default ones first
+    const existingCount = await prisma.category.count({
+      where: { userId },
+    });
+
+    if (existingCount === 0 && defaultCategories.length > 0) {
+      await prisma.category.createMany({
+        data: defaultCategories.map((category) => ({
+          ...category,
+          userId,
+        })),
+      });
+    }
+    const [categories, count] = await Promise.all([
+      prisma.category.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+        take: limit,
+        skip,
+        orderBy: { name: 'asc' },
+      }),
+      prisma.category.count({
+        where: { userId },
+      }),
+    ]);
+
+    const docs = getPageDocs({
+      page,
+      limit,
+      count,
+    });
+
+    return {
+      categories,
+      docs,
+    };
   }
 
   /**

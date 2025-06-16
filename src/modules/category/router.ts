@@ -5,9 +5,12 @@ import {
   createCategorySchema,
   updateCategoryDataSchema,
   categoryParamSchema,
+  userIdParamSchema,
 } from './validation';
 import CategoryController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import queryValidator from '../../utils/validators/queryValidator';
+import { paginationSchema } from '../../utils/validators/commonValidation';
 
 const categoryRouter = Router();
 
@@ -16,6 +19,21 @@ categoryRouter.post(
   authMiddleware,
   bodyValidator(createCategorySchema),
   CategoryController.createCategory.bind(CategoryController),
+);
+
+categoryRouter.get(
+  '/get/:categoryId',
+  authMiddleware,
+  paramValidator(categoryParamSchema),
+  CategoryController.getCategoryById.bind(CategoryController),
+);
+
+categoryRouter.get(
+  '/getallcategories/:userId', //pagination
+  authMiddleware,
+  paramValidator(userIdParamSchema),
+  queryValidator(paginationSchema),
+  CategoryController.getallCategories.bind(CategoryController),
 );
 
 categoryRouter.patch(
@@ -31,13 +49,6 @@ categoryRouter.delete(
   authMiddleware,
   paramValidator(categoryParamSchema),
   CategoryController.deleteCategory.bind(CategoryController),
-);
-
-categoryRouter.get(
-  '/:categoryId',
-  authMiddleware,
-  paramValidator(categoryParamSchema),
-  CategoryController.getCategoryById.bind(CategoryController),
 );
 
 export default categoryRouter;

@@ -46,29 +46,40 @@ export const updateCategoryDataSchema = z
     message: 'Extra fields are not allowed in the request body',
   });
 
-export const categoryParamSchema = z
-  .object({
-    categoryId: z
-      .string({
-        required_error: 'Category ID is required',
-        invalid_type_error: 'Category ID must be a string',
-      })
-      .uuid('Invalid category ID'),
-  })
-  .strict({
-    message: 'Extra fields are not allowed in the categoryId parameter',
-  });
+export const categoryParamSchema = z.object({
+  categoryId: z
+    .string({
+      required_error: 'Category ID is required',
+      invalid_type_error: 'Category ID must be a string',
+    })
+    .uuid('Invalid category ID'),
+});
 
 export const deleteCategorySchema = z.object({
-  params: z.object({
-    id: z.string().uuid('Invalid category ID'),
-  }),
+  categoryId: z
+    .string({
+      required_error: 'Category ID is required',
+      invalid_type_error: 'Category ID must be a string',
+    })
+    .uuid('Invalid category ID'),
 });
 
 export const getCategoryByIdSchema = z.object({
-  params: z.object({
-    id: z.string().uuid('Invalid category ID'),
-  }),
+  categoryId: z
+    .string({
+      required_error: 'Category ID is required',
+      invalid_type_error: 'Category ID must be a string',
+    })
+    .uuid('Invalid category ID'),
+});
+
+export const userIdParamSchema = z.object({
+  userId: z
+    .string({
+      required_error: 'User ID is required',
+      invalid_type_error: 'User ID must be a string',
+    })
+    .uuid('Invalid user ID'),
 });
 
 export type ICreateCategorySchema = z.infer<typeof createCategorySchema>;
@@ -78,3 +89,4 @@ export type IUpdateCategoryDataSchema = z.infer<
 export type IDeleteCategorySchema = z.infer<typeof deleteCategorySchema>;
 export type IGetCategoryByIdSchema = z.infer<typeof getCategoryByIdSchema>;
 export type ICategoryParamSchema = z.infer<typeof categoryParamSchema>;
+export type IUserIdParamSchema = z.infer<typeof userIdParamSchema>;
