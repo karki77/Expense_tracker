@@ -51,7 +51,17 @@ export const updateExpenseSchema = z
     message: 'only the fields that are provided will be updated',
   });
 
+export const deleteExpenseSchema = z.object({
+  expenseId: z
+    .string({
+      required_error: 'Expense ID is required',
+      invalid_type_error: 'Expense ID must be a UUID',
+    })
+    .uuid('Expense ID must be a valid UUID'),
+});
+
 export type IAddExpenseSchema = z.infer<typeof addExpenseSchema>;
 export type IGetExpenseByIdSchema = z.infer<typeof getExpenseByIdSchema>;
 export type IGetAllExpensesSchema = z.infer<typeof getAllExpensesSchema>;
 export type IUpdateExpenseSchema = z.infer<typeof updateExpenseSchema>;
+export type IDeleteExpenseSchema = z.infer<typeof deleteExpenseSchema>;

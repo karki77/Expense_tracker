@@ -136,6 +136,15 @@ class ExpenseService {
     });
     return updatedExpense;
   }
+  /**
+   * Delete an expense
+   */
+  async deleteExpense(expenseId: string, userId: string) {
+    await this._getExpenseById(expenseId, userId);
+    await prisma.expense.delete({
+      where: { id: expenseId },
+    });
+  }
 }
 
 export default new ExpenseService();

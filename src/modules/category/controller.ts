@@ -139,11 +139,9 @@ class CategoryController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const userId = req.user?.id;
+      const userId = req.user.id;
       const categoryId = req.params.categoryId;
-      if (!userId) {
-        throw new HttpException(401, 'User is not authenticated');
-      }
+
       await this.categoryService.deleteCategory(categoryId, userId);
       res.send(
         new HttpResponse({

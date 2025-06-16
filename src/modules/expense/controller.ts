@@ -6,6 +6,7 @@ import type {
   IGetExpenseByIdSchema,
   IGetAllExpensesSchema,
   IUpdateExpenseSchema,
+  IDeleteExpenseSchema,
 } from './validation';
 
 import ExpenseService from './service';
@@ -106,6 +107,27 @@ export class ExpenseController {
         new HttpResponse({
           message: 'Expense updated successfully',
           data: updatedExpense,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
+   * Delete an expense
+   */
+  public async deleteExpense(
+    req: Request<IDeleteExpenseSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const expenseId = req.params.expenseId;
+      await this.expenseService.deleteExpense(expenseId, userId);
+      res.send(
+        new HttpResponse({
+          message: 'Expense deleted successfully',
         }),
       );
     } catch (error) {

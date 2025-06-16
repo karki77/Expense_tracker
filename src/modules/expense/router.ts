@@ -6,6 +6,7 @@ import {
   getExpenseByIdSchema,
   getAllExpensesSchema,
   updateExpenseSchema,
+  deleteExpenseSchema,
 } from './validation';
 import ExpenseController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
@@ -39,6 +40,13 @@ expenseRouter.patch(
   paramsValidator(getExpenseByIdSchema),
   bodyValidator(updateExpenseSchema),
   ExpenseController.updateExpense.bind(ExpenseController),
+);
+
+expenseRouter.delete(
+  '/delete/:expenseId',
+  authMiddleware,
+  paramsValidator(deleteExpenseSchema),
+  ExpenseController.deleteExpense.bind(ExpenseController),
 );
 
 export default expenseRouter;
