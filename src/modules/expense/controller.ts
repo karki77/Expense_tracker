@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '../../utils/api/httpResponse';
+import HttpException from '../../utils/api/httpException';
 import type {
   IAddExpenseSchema,
   IGetExpenseByIdSchema,
   IGetAllExpensesSchema,
+  IUpdateExpenseSchema,
 } from './validation';
 
 import ExpenseService from './service';
@@ -62,7 +64,7 @@ export class ExpenseController {
    * Get all expenses
    */
   public async getAllExpenses(
-    req: Request,
+    req: Request<IGetAllExpensesSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
@@ -83,5 +85,33 @@ export class ExpenseController {
       next(error);
     }
   }
+  /**
+   * Update an expense
+   */
+  public async updateExpense(
+    req: Request<IGetExpenseByIdSchema, unknown, IUpdateExpenseSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const expenseId = req.params.expenseId;
+
+      const updatedExpense = await this.expenseService.updateExpense(
+        expenseId,
+        userId,
+        req.body,
+      );
+      res.send(
+        new HttpResponse({
+          message: 'Expense updated successfully',
+          data: updatedExpense,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
 export default new ExpenseController();

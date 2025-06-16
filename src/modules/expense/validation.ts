@@ -40,7 +40,18 @@ export const getAllExpensesSchema = z.object({
     .uuid('User ID must be a valid UUID'),
 });
 
-//
+export const updateExpenseSchema = z
+  .object({
+    name: z.string().optional(),
+    amount: z.number().optional(),
+    date: z.string().optional(),
+    description: z.string().optional(),
+  })
+  .strict({
+    message: 'only the fields that are provided will be updated',
+  });
+
 export type IAddExpenseSchema = z.infer<typeof addExpenseSchema>;
 export type IGetExpenseByIdSchema = z.infer<typeof getExpenseByIdSchema>;
 export type IGetAllExpensesSchema = z.infer<typeof getAllExpensesSchema>;
+export type IUpdateExpenseSchema = z.infer<typeof updateExpenseSchema>;

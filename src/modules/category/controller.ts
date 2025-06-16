@@ -107,16 +107,13 @@ class CategoryController {
    * Update a category
    */
   public async updateCategory(
-    req: Request<{ categoryId: string }, unknown, IUpdateCategoryDataSchema>,
+    req: Request<ICategoryParamSchema, unknown, IUpdateCategoryDataSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      const userId = req.user?.id;
+      const userId = req.user.id;
       const categoryId = req.params.categoryId;
-      if (!userId) {
-        throw new HttpException(401, 'User is not authenticated');
-      }
 
       const updatedCategory = await this.categoryService.updateCategory(
         userId,

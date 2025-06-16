@@ -1,5 +1,5 @@
 import { prisma } from '../../config/setup/dbSetup';
-import type { IAddExpenseSchema } from './validation';
+import type { IAddExpenseSchema, IUpdateExpenseSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import { pagination, getPageDocs } from '#utils/pagination/pagination';
@@ -72,7 +72,7 @@ class ExpenseService {
     return expense;
   }
   /**
-   * Get all expenses
+   * Get all expenses of a user
    */
   async getAllExpenses(userId: string, query: IPaginationSchema) {
     const { skip, limit, page } = pagination({
@@ -101,6 +101,40 @@ class ExpenseService {
     });
 
     return { expenses, docs };
+  }
+  /**
+   * Update an expense
+   */
+  async updateExpense(
+    expenseId: string,
+    userId: string,
+    data: IUpdateExpenseSchema,
+  ) {
+    const expense = await this._getExpenseById(expenseId, userId);
+    if (data.name && data.name !== expense.name) {
+      const existingExpense = await prisma.expense.findFirst({
+        where: {
+          name: data.name,
+          userId,
+          NOT: {
+            id: expenseId,
+          },
+        },
+      });
+      if (existingExpense) {
+        throw new HttpException(400, 'Expense with this name already exists');
+      }
+    }
+    const updatedExpense = await prisma.expense.update({
+      where: { id: expenseId, userId: userId },
+      data: {
+        ...data,
+      },
+      include: {
+        category: true,
+      },
+    });
+    return updatedExpense;
   }
 }
 

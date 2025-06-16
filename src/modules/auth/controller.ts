@@ -95,10 +95,8 @@ export class AuthController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        throw new HttpException(401, 'User not authenticated');
-      }
+      const userId = req.user.id;
+
       await this.authService.changePassword(userId, req.body);
       res.send(
         new HttpResponse({
@@ -160,9 +158,6 @@ export class AuthController {
   ): Promise<void> {
     try {
       const userId = req.user?.id;
-      if (!userId) {
-        throw new HttpException(401, 'User not authenticated');
-      }
 
       // Check if file exists in request
       if (!req.file) {
