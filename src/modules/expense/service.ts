@@ -13,6 +13,7 @@ class ExpenseService {
   async addExpense(userId: string, data: IAddExpenseSchema) {
     const existingExpense = await prisma.expense.findFirst({
       where: {
+        name: data.name,
         userId,
       },
     });
@@ -36,6 +37,7 @@ class ExpenseService {
 
     const newExpense = await prisma.expense.create({
       data: {
+        name: data.name,
         amount: data.amount,
         date: data.date,
         description: data.description,
@@ -47,26 +49,41 @@ class ExpenseService {
       },
     });
 
-    return {
-      data: newExpense,
-    };
+    //
+    return newExpense;
   }
   /**
    * Get expense by id and user id
    */
-  async _getExpenseById(id: string, userId: string) {
+  async _getExpenseById(expenseId: string, userId: string) {
     const expense = await prisma.expense.findFirst({
       where: {
-        id,
+        id: expenseId,
         userId,
       },
       include: {
         category: true,
       },
     });
-    return {
-      data: expense,
-    };
+
+    if (!expense) throw new HttpException(404, 'Expense not found');
+
+    //
+    return expense;
+  }
+  /**
+   * Get all expenses
+   */
+  async _getAllExpenses(userId: string) {
+    const expenses = await prisma.expense.findMany({
+      where: { userId },
+      include: {
+        category: true,
+      },
+    });
+
+    //
+    return expenses;
   }
 }
 

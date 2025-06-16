@@ -1,6 +1,10 @@
 import { z } from 'zod';
 export const addExpenseSchema = z
   .object({
+    name: z
+      .string({ required_error: 'Name is required' })
+      .trim()
+      .min(1, 'Name must not be empty'),
     amount: z
       .number({ required_error: 'Amount is required' })
       .min(1, 'Amount must be at least 1'),
@@ -19,10 +23,24 @@ export const addExpenseSchema = z
   });
 
 export const getExpenseByIdSchema = z.object({
-  params: z.object({
-    id: z.string().uuid('Invalid expense ID'),
-  }),
+  expenseId: z
+    .string({
+      required_error: 'Expense ID is required',
+      invalid_type_error: 'Expense ID must be a UUID',
+    })
+    .uuid('Expense ID must be a valid UUID'),
 });
 
+export const getAllExpensesSchema = z.object({
+  userId: z
+    .string({
+      required_error: 'User ID is required',
+      invalid_type_error: 'User ID must be a UUID',
+    })
+    .uuid('User ID must be a valid UUID'),
+});
+
+//
 export type IAddExpenseSchema = z.infer<typeof addExpenseSchema>;
 export type IGetExpenseByIdSchema = z.infer<typeof getExpenseByIdSchema>;
+export type IGetAllExpensesSchema = z.infer<typeof getAllExpensesSchema>;

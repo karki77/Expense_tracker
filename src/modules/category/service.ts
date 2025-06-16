@@ -94,26 +94,7 @@ class CategoryService {
     categoryId: string,
     data: IUpdateCategoryDataSchema,
   ) {
-    //input validation
-    if (!userId || !categoryId) {
-      throw new HttpException(400, 'User ID and Category ID are requiered');
-    }
-
-    if (!data || Object.keys(data).length === 0) {
-      throw new HttpException(400, 'Data is requiered to update');
-    }
-
-    // check if category exists and belongs to the specific user
-    const category = await prisma.category.findFirst({
-      where: {
-        id: categoryId,
-        userId: userId,
-      },
-    });
-    if (!category) {
-      throw new HttpException(404, 'Category not found or access denied');
-    }
-    // check name uniqueness only if name is being updated
+    const category = await this._getCategoryById(categoryId, userId);
 
     if (data.name && data.name !== category.name) {
       const existingCategory = await prisma.category.findFirst({
@@ -125,6 +106,7 @@ class CategoryService {
           },
         },
       });
+
       if (existingCategory) {
         throw new HttpException(400, 'Category with this name already exists');
       }
@@ -137,9 +119,9 @@ class CategoryService {
       },
       data: {
         ...data,
-        updatedAt: new Date(),
       },
     });
+
     return updatedCategory;
   }
   /**
@@ -147,21 +129,7 @@ class CategoryService {
    */
   async deleteCategory(categoryId: string, userId: string) {
     await this._getCategoryById(categoryId, userId);
-    //validate inputs
-    if (!categoryId || !userId) {
-      throw new HttpException(400, 'Category ID and User ID are requiered');
-    }
-    //check if category exists and belongs to the user in  a single query
-    const category = await prisma.category.findFirst({
-      where: {
-        id: categoryId,
-        userId: userId,
-      },
-    });
-    if (!category) {
-      throw new HttpException(404, 'Category not found or access deneid');
-    }
-    await prisma.category.delete({
+    return await prisma.category.delete({
       where: {
         id: categoryId,
       },

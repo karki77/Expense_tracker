@@ -16,9 +16,7 @@ const paramValidator =
   ): void => {
     try {
       req.params = schema.parse(req.params);
-
       next();
-      return;
     } catch (error) {
       const errorObj =
         error instanceof ZodError ? error.flatten().fieldErrors : {};
@@ -28,7 +26,6 @@ const paramValidator =
         message: 'Param validation error!',
         errors: errorObj,
       });
-      return;
     }
   };
 

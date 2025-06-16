@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "prisma generate && tsc",
+    "build": "tsc",
     "migrate": "prisma migrate deploy",
     "build-watch": "tsc --watch",
     "permission": "chmod +x docker-setup.sh",
