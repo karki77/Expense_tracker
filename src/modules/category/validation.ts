@@ -73,15 +73,6 @@ export const getCategoryByIdSchema = z.object({
     .uuid('Invalid category ID'),
 });
 
-export const userIdParamSchema = z.object({
-  userId: z
-    .string({
-      required_error: 'User ID is required',
-      invalid_type_error: 'User ID must be a string',
-    })
-    .uuid('Invalid user ID'),
-});
-
 export type ICreateCategorySchema = z.infer<typeof createCategorySchema>;
 export type IUpdateCategoryDataSchema = z.infer<
   typeof updateCategoryDataSchema
@@ -89,4 +80,3 @@ export type IUpdateCategoryDataSchema = z.infer<
 export type IDeleteCategorySchema = z.infer<typeof deleteCategorySchema>;
 export type IGetCategoryByIdSchema = z.infer<typeof getCategoryByIdSchema>;
 export type ICategoryParamSchema = z.infer<typeof categoryParamSchema>;
-export type IUserIdParamSchema = z.infer<typeof userIdParamSchema>;

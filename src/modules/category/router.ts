@@ -5,8 +5,8 @@ import {
   createCategorySchema,
   updateCategoryDataSchema,
   categoryParamSchema,
-  userIdParamSchema,
 } from './validation';
+import { userIdParamSchema } from '../../config/setup/userValidation';
 import CategoryController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
 import queryValidator from '../../utils/validators/queryValidator';

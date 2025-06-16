@@ -7,6 +7,7 @@ import type {
 } from './validation';
 
 import ExpenseService from './service';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 export class ExpenseController {
   private expenseService = ExpenseService;
@@ -67,7 +68,10 @@ export class ExpenseController {
   ): Promise<void> {
     try {
       const userId = req.user.id;
-      const expenses = await this.expenseService._getAllExpenses(userId);
+      const expenses = await this.expenseService.getAllExpenses(
+        userId,
+        req.query as IPaginationSchema,
+      );
 
       res.send(
         new HttpResponse({

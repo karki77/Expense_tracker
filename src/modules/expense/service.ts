@@ -1,6 +1,8 @@
 import { prisma } from '../../config/setup/dbSetup';
 import type { IAddExpenseSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
+import { pagination, getPageDocs } from '#utils/pagination/pagination';
 
 /**
  * Expense Service
@@ -20,7 +22,7 @@ class ExpenseService {
     if (existingExpense) {
       throw new HttpException(400, 'expense with this name already exists');
     }
-    //
+
     const category = await prisma.category.findFirst({
       where: {
         id: data.categoryId,
@@ -49,7 +51,6 @@ class ExpenseService {
       },
     });
 
-    //
     return newExpense;
   }
   /**
@@ -68,22 +69,38 @@ class ExpenseService {
 
     if (!expense) throw new HttpException(404, 'Expense not found');
 
-    //
     return expense;
   }
   /**
    * Get all expenses
    */
-  async _getAllExpenses(userId: string) {
-    const expenses = await prisma.expense.findMany({
-      where: { userId },
-      include: {
-        category: true,
-      },
+  async getAllExpenses(userId: string, query: IPaginationSchema) {
+    const { skip, limit, page } = pagination({
+      limit: query.limit,
+      page: query.page,
     });
 
-    //
-    return expenses;
+    const [expenses, count] = await Promise.all([
+      await prisma.expense.findMany({
+        where: {
+          userId,
+        },
+        take: limit,
+        skip,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.expense.count(),
+    ]);
+
+    const docs = getPageDocs({
+      page,
+      limit,
+      count,
+    });
+
+    return { expenses, docs };
   }
 }
 
