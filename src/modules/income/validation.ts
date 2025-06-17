@@ -32,4 +32,27 @@ export const addIncomeSchema = z
     message: 'All fields are required',
   });
 
+export const getIncomeByIdSchema = z.object({
+  incomeId: z
+    .string({
+      required_error: 'Income ID is required',
+      invalid_type_error: 'Expense ID must be a UUID',
+    })
+    .uuid('Expense ID must be a valid UUID'),
+});
+
+export const updateIncomeSchema = z
+  .object({
+    amount: z.number().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    isRecurring: z.boolean().optional(),
+    period: z.enum(['WEEKLY', 'MONTHLY', 'YEARLY']).optional(),
+  })
+  .strict({
+    message: 'Only the fields that are provided will be updated',
+  });
+
 export type AddIncomeSchema = z.infer<typeof addIncomeSchema>;
+export type GetIncomeByIdSchema = z.infer<typeof getIncomeByIdSchema>;
+export type UpdateIncomeSchema = z.infer<typeof updateIncomeSchema>;
