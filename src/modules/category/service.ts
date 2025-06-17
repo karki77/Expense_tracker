@@ -1,13 +1,16 @@
 import { prisma } from '../../config/setup/dbSetup';
 import { Prisma, CategoryType } from '@prisma/client';
 import HttpException from '../../utils/api/httpException';
-import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
+import type {
+  ICreateCategorySchema,
+  IUpdateCategoryDataSchema,
+} from './validation';
 import {
   defaultExpenseCategories,
   defaultIncomeCategories,
 } from '../../config/setup/defaultCategories';
 import { getPageDocs, pagination } from '../../utils/pagination/pagination';
-import { IPaginationSchema } from '#utils/validators/commonValidation';
+import type { IPaginationSchema } from '#utils/validators/commonValidation';
 
 class CategoryService {
   /**
@@ -77,7 +80,7 @@ class CategoryService {
         },
         take: limit,
         skip,
-        orderBy: { name: 'asc' },
+        orderBy: { name: Prisma.SortOrder.asc },
       }),
       prisma.category.count({
         where: {

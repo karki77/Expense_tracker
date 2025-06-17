@@ -38,7 +38,7 @@ export class IncomeController {
    * get income by id
    */
   async getIncomeById(
-    req: Request<GetIncomeByIdSchema, unknown, unknown>,
+    req: Request<GetIncomeByIdSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
