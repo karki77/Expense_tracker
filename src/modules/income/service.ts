@@ -101,5 +101,14 @@ class IncomeService {
     });
     return updatedIncome;
   }
+  /**
+   * delete income
+   */
+  async deleteIncome(incomeId: string, userId: string) {
+    await this.getIncomeById(incomeId, userId);
+    await prisma.income.delete({
+      where: { id: incomeId },
+    });
+  }
 }
 export default new IncomeService();

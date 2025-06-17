@@ -5,6 +5,7 @@ import type {
   GetIncomeByIdSchema,
   GetAllUserIncomesSchema,
   UpdateIncomeSchema,
+  DeleteIncomeSchema,
 } from './validation';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import IncomeService from './service';
@@ -18,7 +19,7 @@ export class IncomeController {
     req: Request<unknown, unknown, AddIncomeSchema>,
     res: Response,
     next: NextFunction,
-  ) {
+  ): Promise<void> {
     try {
       const userId = req.user.id;
       const income = await this.IncomeService.addIncome(userId, req.body);
@@ -40,7 +41,7 @@ export class IncomeController {
     req: Request<GetIncomeByIdSchema, unknown, unknown>,
     res: Response,
     next: NextFunction,
-  ) {
+  ): Promise<void> {
     try {
       const userId = req.user.id;
       const incomeId = req.params.incomeId;
@@ -63,7 +64,7 @@ export class IncomeController {
     req: Request<GetAllUserIncomesSchema>,
     res: Response,
     next: NextFunction,
-  ) {
+  ): Promise<void> {
     try {
       const userId = req.user.id;
       const incomes = await this.IncomeService.getallUserIncomes(
@@ -88,7 +89,7 @@ export class IncomeController {
     req: Request<GetIncomeByIdSchema, unknown, UpdateIncomeSchema>,
     res: Response,
     next: NextFunction,
-  ) {
+  ): Promise<void> {
     try {
       const userId = req.user.id;
       const incomeId = req.params.incomeId;
@@ -101,6 +102,28 @@ export class IncomeController {
         new HttpResponse({
           message: 'Income updated successfully',
           data: income,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * delete income
+   */
+  async deleteIncome(
+    req: Request<DeleteIncomeSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const incomeId = req.params.incomeId;
+      await this.IncomeService.deleteIncome(incomeId, userId);
+      res.send(
+        new HttpResponse({
+          message: 'Income deleted successfully',
         }),
       );
     } catch (error) {
