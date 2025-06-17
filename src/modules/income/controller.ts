@@ -4,6 +4,7 @@ import type {
   AddIncomeSchema,
   GetIncomeByIdSchema,
   GetAllUserIncomesSchema,
+  UpdateIncomeSchema,
 } from './validation';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import IncomeService from './service';
@@ -73,6 +74,33 @@ export class IncomeController {
         new HttpResponse({
           message: 'Incomes fetched successfully',
           data: incomes,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * update income
+   */
+  async updateIncome(
+    req: Request<GetIncomeByIdSchema, unknown, UpdateIncomeSchema>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const userId = req.user.id;
+      const incomeId = req.params.incomeId;
+      const income = await this.IncomeService.updateIncome(
+        incomeId,
+        userId,
+        req.body,
+      );
+      res.send(
+        new HttpResponse({
+          message: 'Income updated successfully',
+          data: income,
         }),
       );
     } catch (error) {

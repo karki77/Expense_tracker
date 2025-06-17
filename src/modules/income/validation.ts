@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 export const addIncomeSchema = z
   .object({
+    name: z.string({
+      required_error: 'Name is required',
+      invalid_type_error: 'Name must be a string',
+    }),
     amount: z
       .number({
         required_error: 'Amount is required',
@@ -59,7 +63,8 @@ export const updateIncomeSchema = z
     period: z.enum(['WEEKLY', 'MONTHLY', 'YEARLY']).optional(),
   })
   .strict({
-    message: 'Only the fields that are provided will be updated',
+    message:
+      'only amount, startDate, endDate, isRecurring, period are allowed to be updated',
   });
 
 export type AddIncomeSchema = z.infer<typeof addIncomeSchema>;
