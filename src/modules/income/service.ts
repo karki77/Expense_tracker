@@ -1,6 +1,8 @@
 import { prisma } from '../../config/setup/dbSetup';
 import type { AddIncomeSchema, UpdateIncomeSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
+import { pagination, getPageDocs } from '#utils/pagination/pagination';
 
 class IncomeService {
   /**
@@ -53,6 +55,37 @@ class IncomeService {
       data,
     });
     return income;
+  }
+
+  /**
+   * get all incomes
+   */
+  async getallUserIncomes(userId: string, query: IPaginationSchema) {
+    const { skip, limit, page } = pagination({
+      limit: query.limit,
+      page: query.page,
+    });
+
+    const [incomes, count] = await Promise.all([
+      await prisma.income.findMany({
+        where: {
+          userId,
+        },
+        take: limit,
+        skip,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.expense.count(),
+    ]);
+
+    const docs = getPageDocs({
+      page,
+      limit,
+      count,
+    });
+    return { incomes, docs };
   }
 }
 export default new IncomeService();
