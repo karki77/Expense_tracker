@@ -6,6 +6,7 @@ import {
   addIncomeSchema,
   getIncomeByIdSchema,
   getAllUserIncomesSchema,
+  updateIncomeSchema,
 } from './validation';
 import { authMiddleware } from '../../middleware/authMiddleware';
 
@@ -30,6 +31,14 @@ incomeRouter.get(
   authMiddleware,
   paramValidator(getAllUserIncomesSchema),
   IncomeController.getallUserIncomes.bind(IncomeController),
+);
+
+incomeRouter.patch(
+  '/update-income/:incomeId',
+  authMiddleware,
+  paramValidator(getIncomeByIdSchema),
+  bodyValidator(updateIncomeSchema),
+  IncomeController.updateIncome.bind(IncomeController),
 );
 
 export default incomeRouter;

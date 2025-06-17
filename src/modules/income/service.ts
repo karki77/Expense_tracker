@@ -45,17 +45,6 @@ class IncomeService {
     }
     return income;
   }
-  async updateIncome(
-    incomeId: string,
-    userId: string,
-    data: UpdateIncomeSchema,
-  ) {
-    const income = await prisma.income.update({
-      where: { id: incomeId, userId },
-      data,
-    });
-    return income;
-  }
 
   /**
    * get all incomes
@@ -86,6 +75,31 @@ class IncomeService {
       count,
     });
     return { incomes, docs };
+  }
+  /**
+   * update income
+   */
+  async updateIncome(
+    incomeId: string,
+    userId: string,
+    data: UpdateIncomeSchema,
+  ) {
+    const income = await this.getIncomeById(incomeId, userId);
+
+    const updatedIncome = await prisma.income.update({
+      where: { id: incomeId, userId },
+      data: {
+        amount: data.amount,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        isRecurring: data.isRecurring,
+        period: data.period,
+      },
+      include: {
+        category: true,
+      },
+    });
+    return updatedIncome;
   }
 }
 export default new IncomeService();
