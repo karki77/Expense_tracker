@@ -41,6 +41,15 @@ export const getIncomeByIdSchema = z.object({
     .uuid('Expense ID must be a valid UUID'),
 });
 
+export const getAllUserIncomesSchema = z.object({
+  userId: z
+    .string({
+      required_error: 'User ID is required',
+      invalid_type_error: 'User ID must be a string',
+    })
+    .uuid('User ID must be a valid UUID'),
+});
+
 export const updateIncomeSchema = z
   .object({
     amount: z.number().optional(),
@@ -55,4 +64,5 @@ export const updateIncomeSchema = z
 
 export type AddIncomeSchema = z.infer<typeof addIncomeSchema>;
 export type GetIncomeByIdSchema = z.infer<typeof getIncomeByIdSchema>;
+export type GetAllUserIncomesSchema = z.infer<typeof getAllUserIncomesSchema>;
 export type UpdateIncomeSchema = z.infer<typeof updateIncomeSchema>;
