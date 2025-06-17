@@ -1,5 +1,5 @@
 import { prisma } from '../../config/setup/dbSetup';
-import type { AddIncomeSchema } from './validation';
+import type { AddIncomeSchema, UpdateIncomeSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
 
 class IncomeService {
@@ -24,6 +24,33 @@ class IncomeService {
       include: {
         category: true,
       },
+    });
+    return income;
+  }
+
+  /**
+   * get income by id
+   */
+  async getIncomeById(incomeId: string, userId: string) {
+    const income = await prisma.income.findFirst({
+      where: { id: incomeId, userId },
+      include: {
+        category: true,
+      },
+    });
+    if (!income) {
+      throw new HttpException(404, 'Income not found');
+    }
+    return income;
+  }
+  async updateIncome(
+    incomeId: string,
+    userId: string,
+    data: UpdateIncomeSchema,
+  ) {
+    const income = await prisma.income.update({
+      where: { id: incomeId, userId },
+      data,
     });
     return income;
   }

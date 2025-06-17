@@ -67,7 +67,9 @@ class ExpenseService {
       },
     });
 
-    if (!expense) throw new HttpException(404, 'Expense not found');
+    if (!expense) {
+      throw new HttpException(404, 'Expense not found');
+    }
 
     return expense;
   }
