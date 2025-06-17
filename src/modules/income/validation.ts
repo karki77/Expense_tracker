@@ -67,7 +67,15 @@ export const updateIncomeSchema = z
       'only amount, startDate, endDate, isRecurring, period are allowed to be updated',
   });
 
+export const deleteIncomeSchema = z.object({
+  incomeId: z.string({
+    required_error: 'Income ID is required',
+    invalid_type_error: 'Income ID must be a string',
+  }),
+});
+
 export type AddIncomeSchema = z.infer<typeof addIncomeSchema>;
 export type GetIncomeByIdSchema = z.infer<typeof getIncomeByIdSchema>;
 export type GetAllUserIncomesSchema = z.infer<typeof getAllUserIncomesSchema>;
 export type UpdateIncomeSchema = z.infer<typeof updateIncomeSchema>;
+export type DeleteIncomeSchema = z.infer<typeof deleteIncomeSchema>;

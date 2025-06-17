@@ -7,6 +7,7 @@ import {
   getIncomeByIdSchema,
   getAllUserIncomesSchema,
   updateIncomeSchema,
+  deleteIncomeSchema,
 } from './validation';
 import { authMiddleware } from '../../middleware/authMiddleware';
 
@@ -39,6 +40,13 @@ incomeRouter.patch(
   paramValidator(getIncomeByIdSchema),
   bodyValidator(updateIncomeSchema),
   IncomeController.updateIncome.bind(IncomeController),
+);
+
+incomeRouter.delete(
+  '/delete-income/:incomeId',
+  authMiddleware,
+  paramValidator(deleteIncomeSchema),
+  IncomeController.deleteIncome.bind(IncomeController),
 );
 
 export default incomeRouter;
