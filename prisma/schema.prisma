@@ -13,6 +13,12 @@ enum Period {
   YEARLY
 }
 
+enum CategoryType {
+  EXPENSE
+  INCOME
+  BOTH
+}
+
 model User {
   id                        String     @id @default(uuid())
   email                     String     @unique
@@ -81,6 +87,7 @@ model Category {
   id          String    @id @default(uuid())
   name        String
   description String?
+  type        String    @default("expense") // Can be "expense", "income", or "both"
   color       String?   // Optional field to improve UI differentiation
   icon        String?   // Optional for visual representation
   createdAt   DateTime  @default(now())

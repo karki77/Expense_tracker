@@ -1,82 +1,88 @@
 import { prisma } from '../../config/setup/dbSetup';
+import { Prisma, CategoryType } from '@prisma/client';
 import HttpException from '../../utils/api/httpException';
 import { ICreateCategorySchema, IUpdateCategoryDataSchema } from './validation';
-import { defaultCategories } from '../../config/setup/defaultCategories';
+import {
+  defaultExpenseCategories,
+  defaultIncomeCategories,
+} from '../../config/setup/defaultCategories';
 import { getPageDocs, pagination } from '../../utils/pagination/pagination';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 class CategoryService {
   /**
-   * Get categories for expense dropdown
+   * Get categories for dropdown filter(filter by type)
    */
-  async getCategories(userId: string) {
-    //check if user has many categories
+  async getCategories(userId: string, type: CategoryType) {
+    const whereClause: Prisma.CategoryWhereInput = {
+      userId,
+      ...(type && {
+        OR: [{ type }, { type: CategoryType.BOTH }],
+      }),
+    };
+
     let categories = await prisma.category.findMany({
-      where: { userId },
+      where: whereClause,
       select: {
         id: true,
         name: true,
+        type: true,
+        icon: true,
+        color: true,
       },
       orderBy: { name: 'asc' },
     });
-    // If no category exist, create default ones
-    if (categories.length === 0 && defaultCategories.length > 0) {
-      await prisma.category.createMany({
-        data: defaultCategories.map((category) => ({
-          ...category,
-          userId,
-        })),
+
+    if (categories.length === 0) {
+      await this.createDefaultCategories(userId);
+      categories = await prisma.category.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          icon: true,
+          color: true,
+        },
+        orderBy: { name: 'asc' },
       });
     }
-    //fetch the newly created categories
-    const response = await prisma.category.findMany({
-      where: { userId },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-      },
-      orderBy: { name: 'asc' },
-    });
-    return response;
+    return categories;
   }
 
   /**
    * Get all categories with pagination
    */
 
-  async getallCategories(userId: string, query: IPaginationSchema) {
+  async getallCategories(
+    userId: string,
+    query: IPaginationSchema & { type: CategoryType },
+  ) {
     const { skip, limit, page } = pagination({
       limit: query.limit,
       page: query.page,
     });
-    // If no categories exist, create default ones first
-    const existingCount = await prisma.category.count({
-      where: { userId },
-    });
 
-    if (existingCount === 0 && defaultCategories.length > 0) {
-      await prisma.category.createMany({
-        data: defaultCategories.map((category) => ({
-          ...category,
-          userId,
-        })),
-      });
-    }
     const [categories, count] = await Promise.all([
       prisma.category.findMany({
-        where: { userId },
+        where: {
+          userId,
+        },
         select: {
           id: true,
           name: true,
-          description: true,
+          type: true,
+          icon: true,
+          color: true,
         },
         take: limit,
         skip,
         orderBy: { name: 'asc' },
       }),
       prisma.category.count({
-        where: { userId },
+        where: {
+          userId,
+        },
       }),
     ]);
 
@@ -86,10 +92,7 @@ class CategoryService {
       count,
     });
 
-    return {
-      categories,
-      docs,
-    };
+    return { categories, docs };
   }
 
   /**
@@ -182,6 +185,23 @@ class CategoryService {
       where: {
         id: categoryId,
       },
+    });
+  }
+
+  async createDefaultCategories(userId: string) {
+    const defaultCategories = [
+      ...defaultExpenseCategories,
+      ...defaultIncomeCategories,
+    ].map((category) => ({
+      ...category,
+      userId,
+      type: defaultExpenseCategories.includes(category)
+        ? CategoryType.EXPENSE
+        : CategoryType.INCOME,
+    }));
+
+    await prisma.category.createMany({
+      data: defaultCategories,
     });
   }
 }

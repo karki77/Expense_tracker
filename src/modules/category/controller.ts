@@ -8,6 +8,7 @@ import type {
 import CategoryService from './service';
 import { HttpResponse } from '../../utils/api/httpResponse';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
+import { CategoryType } from '@prisma/client';
 
 class CategoryController {
   private categoryService = CategoryService;
@@ -49,17 +50,24 @@ class CategoryController {
       const userId = req.user.id;
       const { categories, docs } = await this.categoryService.getallCategories(
         userId,
-        req.query as IPaginationSchema,
+        {
+          ...(req.query as IPaginationSchema),
+          type: CategoryType.EXPENSE,
+        },
       );
       const filteredCategories = categories.map(
         (category: {
           id: string;
           name: string;
-          description: string | null;
+          type: string;
+          color: string | null;
+          icon: string | null;
         }) => ({
           id: category.id,
           name: category.name,
-          description: category.description,
+          type: category.type,
+          color: category.color,
+          icon: category.icon,
         }),
       );
       res.send(

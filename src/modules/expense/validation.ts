@@ -7,7 +7,7 @@ export const addExpenseSchema = z
       .min(1, 'Name must not be empty'),
     amount: z
       .number({ required_error: 'Amount is required' })
-      .min(1, 'Amount must be at least 1'),
+      .min(1, 'Amount must be greater than 0'),
 
     date: z.string({ required_error: 'Date is required' }),
 

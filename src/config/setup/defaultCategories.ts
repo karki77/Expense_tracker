@@ -3,7 +3,7 @@ export interface DefaultCategory {
   description: string;
 }
 
-export const defaultCategories: DefaultCategory[] = [
+export const defaultExpenseCategories: DefaultCategory[] = [
   { name: 'Dining', description: 'Restaurant meals and food delivery' },
   { name: 'Groceries', description: 'Supermarket and food shopping' },
   { name: 'Fuel', description: 'Gas station and vehicle fuel' },
@@ -20,4 +20,12 @@ export const defaultCategories: DefaultCategory[] = [
   { name: 'Travel', description: 'Vacation and travel expenses' },
   { name: 'Personal Care', description: 'Haircuts and personal hygiene' },
   { name: 'Subscriptions', description: 'Monthly service subscriptions' },
+];
+
+export const defaultIncomeCategories: DefaultCategory[] = [
+  { name: 'Salary', description: 'Monthly salary' },
+  { name: 'Freelance', description: 'Freelance income' },
+  { name: 'Investment', description: 'Investment income' },
+  { name: 'Business', description: 'Business income' },
+  { name: 'Other', description: 'Other income' },
 ];
