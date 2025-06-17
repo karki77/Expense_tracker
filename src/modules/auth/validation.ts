@@ -8,14 +8,16 @@ export const registerUserSchema = z
         invalid_type_error: 'firstname must be a string',
       })
       .toLowerCase()
-      .min(1, { message: 'firstname must be at least of 1 character' }),
+      .min(1, { message: 'firstname must be at least of 1 character' })
+      .max(50, { message: 'firstname must be at most 20 characters long' }),
     lastname: z
       .string({
         required_error: 'lastname is required',
         invalid_type_error: 'lastname must be a string',
       })
       .toLowerCase()
-      .min(1, { message: 'lastname must be at least of 1 character' }),
+      .min(1, { message: 'lastname must be at least of 1 character' })
+      .max(50, { message: 'lastname must be at most 50 characters long' }),
 
     username: z
       .string({
@@ -37,7 +39,7 @@ export const registerUserSchema = z
       .toLowerCase()
       .trim()
       .email({ message: 'Invalid email address' })
-      .min(5, { message: 'Email must be at least 5 characters long' })
+      .min(10, { message: 'Email must be at least 10 characters long' })
       .max(50, { message: 'Email must be at most 50 characters long' }),
     password: z
       .string({

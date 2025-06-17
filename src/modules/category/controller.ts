@@ -7,7 +7,6 @@ import type {
 } from './validation';
 import CategoryService from './service';
 import { HttpResponse } from '../../utils/api/httpResponse';
-import HttpException from '../../utils/api/httpException';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 class CategoryController {

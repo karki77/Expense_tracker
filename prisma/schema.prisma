@@ -30,7 +30,7 @@ model User {
   resetTokenExpires         DateTime?
   refreshToken              String?
   expenses                  Expense[]
-  budgets                   Budget[]
+  incomes                   Income[]
   categories                Category[]
   userProfile               Profile?
 
@@ -89,13 +89,13 @@ model Category {
 
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expenses    Expense[]
-  budgets     Budget[]
+  incomes     Income[]
 
   @@unique([name, userId])
   @@map("categories")
 }
 
-model Budget {
+model Income {
   id            String    @id @default(uuid())
   amount        Float
   startDate     DateTime
@@ -110,5 +110,5 @@ model Budget {
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   category      Category  @relation(fields: [categoryId], references: [id])
 
-  @@map("budgets")
+  @@map("incomes")
 }
