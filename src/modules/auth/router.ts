@@ -54,11 +54,4 @@ authrouter.post(
   authController.resetPassword.bind(authController),
 );
 
-authrouter.post(
-  '/upload-profile-image',
-  authMiddleware,
-  upload.single('file'),
-  authController.uploadProfileImage.bind(authController),
-);
-
 export default authrouter;
