@@ -58,6 +58,9 @@ class AuthService {
           },
         },
       },
+      include: {
+        userProfile: true,
+      },
     });
     //Update verification link to use token
     //const verificationLink = `http://localhost:7000/api/v2/user/verify-email?token=${verificationToken}`;
@@ -99,9 +102,15 @@ class AuthService {
   async loginUser(data: ILoginUserSchema) {
     const user = await prisma.user.findUnique({
       where: { email: data.email },
+      include: {
+        userProfile: true,
+      },
     });
     if (!user) {
       throw new HttpException(400, 'Invalid email or password');
+    }
+    if (!user.userProfile) {
+      throw new HttpException(400, 'User profile not found');
     }
     const isPasswordValid = await verifyPassword(user.password, data.password);
     if (!isPasswordValid) {
@@ -112,6 +121,9 @@ class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        profile: {
+          id: user.userProfile.id,
+        },
       },
       accessToken,
       refreshToken,

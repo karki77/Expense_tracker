@@ -11,7 +11,7 @@ import { IPaginationSchema } from '#utils/validators/commonValidation';
 import IncomeService from './service';
 
 export class IncomeController {
-  private readonly IncomeService = IncomeService;
+  private IncomeService = IncomeService;
   /**
    * Add income
    */

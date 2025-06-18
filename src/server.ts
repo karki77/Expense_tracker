@@ -47,5 +47,3 @@ app.use(globalErrorHandler);
 app.listen(PORT, () => {
   logger.info(`Server is running at port ${PORT}`);
 });
-
-// ok
