@@ -147,41 +147,5 @@ export class AuthController {
       next(error);
     }
   }
-
-  /**
-   * Upload Profile Image
-   */
-  public async uploadProfileImage(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    try {
-      const userId = req.user?.id;
-
-      // Check if file exists in request
-      if (!req.file) {
-        throw new HttpException(400, 'No file uploaded');
-      }
-
-      console.log('Uploaded file:', req.file);
-
-      // Just use the filename
-      const filename = req.file.filename;
-      console.log('Filename:', filename);
-
-      // Update user profile with just the filename
-      await this.authService.uploadProfileImage(userId, filename);
-
-      res.send(
-        new HttpResponse({
-          message: 'Profile image uploaded successfully',
-          data: { filename },
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
 }
 export default new AuthController();

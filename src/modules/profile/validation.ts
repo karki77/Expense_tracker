@@ -16,7 +16,7 @@ export const updateProfileSchema = z
       .string({ required_error: 'First name is required' })
       .optional(),
     lastName: z.string({ required_error: 'Last name is required' }).optional(),
-    username: z.string({ required_error: 'Username is required' }).optional(),
+    userName: z.string({ required_error: 'Username is required' }).optional(),
     image: z.string({ required_error: 'Image is required' }).optional(),
   })
   .strict({
