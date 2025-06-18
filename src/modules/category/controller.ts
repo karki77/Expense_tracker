@@ -91,12 +91,9 @@ class CategoryController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const { name, description } = req.body;
-
       const userId = req.user.id;
-
       const response = await this.categoryService.createCategory(
-        { name, description },
+        req.body,
         userId,
       );
 

@@ -54,6 +54,7 @@ class ExpenseService {
     return newExpense;
   }
   /**
+   * Private function: Only use as a utility function
    * Get expense by id and user id
    */
   async _getExpenseById(expenseId: string, userId: string) {
@@ -93,7 +94,11 @@ class ExpenseService {
           createdAt: 'desc',
         },
       }),
-      prisma.expense.count(),
+      await prisma.expense.count({
+        where: {
+          userId,
+        },
+      }),
     ]);
 
     const docs = getPageDocs({

@@ -11,7 +11,7 @@ import { IPaginationSchema } from '#utils/validators/commonValidation';
 import IncomeService from './service';
 
 export class IncomeController {
-  private readonly IncomeService = IncomeService;
+  private IncomeService = IncomeService;
   /**
    * Add income
    */
@@ -38,7 +38,7 @@ export class IncomeController {
    * get income by id
    */
   async getIncomeById(
-    req: Request<GetIncomeByIdSchema, unknown, unknown>,
+    req: Request<GetIncomeByIdSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
