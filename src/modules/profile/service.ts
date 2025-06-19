@@ -1,4 +1,4 @@
-import { IGetProfileSchema, IUpdateProfileSchema } from './validation';
+import { IUpdateProfileSchema, IUpdateFinancialDataSchema } from './validation';
 import { prisma } from '../../config/setup/dbSetup';
 import HttpException from '../../utils/api/httpException';
 
@@ -34,18 +34,29 @@ class ProfileService {
     if (!user) {
       throw new HttpException(400, 'User not found');
     }
-    if (!user.userProfile) {
-      throw new HttpException(400, 'User profile not found');
-    }
 
-    const profile = await prisma.profile.update({
-      where: { id: user.userProfile.id },
+    await prisma.profile.update({
+      where: { userId: userId },
       data: {
         image: filename,
       },
     });
 
     return { filename };
+  }
+  /**
+   * Check if username is available
+   */
+  async isUsernameAvailable(username: string, currentUserId: string) {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username: username,
+        id: {
+          not: currentUserId,
+        },
+      },
+    });
+    return !existingUser;
   }
   /**
    * Update user profile
@@ -55,43 +66,46 @@ class ProfileService {
     data: IUpdateProfileSchema,
     file?: Express.Multer.File,
   ) {
-    const updateData: any = {
-      firstname: data.firstName,
-      lastname: data.lastName,
-      username: data.userName,
-    };
+    // check if username is being updated and if it is available
+    if (data.userName) {
+      const isAvailable = await this.isUsernameAvailable(data.userName, userId);
+      if (!isAvailable) {
+        throw new HttpException(400, 'Username is already taken');
+      }
+      const updateData = {
+        firstname: data.firstName,
+        lastname: data.lastName,
+        username: data.userName,
+        image: data.image,
+      };
 
-    // If a file is uploaded, use its filename as the image
-    if (file) {
-      updateData.image = file.filename;
-    } else if (data.image) {
-      // If no file but image path provided in data
-      updateData.image = data.image;
-    }
+      // If a file is uploaded, use its filename as the image
+      if (file) {
+        updateData.image = file.filename;
+      } else if (data.image) {
+        // If no file but image path provided in data
+        updateData.image = data.image;
+      }
 
-    const profile = await prisma.profile.update({
-      where: { userId: userId },
-      data: updateData,
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            isVerified: true,
+      const profile = await prisma.profile.update({
+        where: { userId: userId },
+        data: updateData,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              isVerified: true,
+            },
           },
         },
-      },
-    });
-    return profile;
-  }
-  /**
-   * Delete user profile
-   */
-  async deleteProfile(userId: string) {
-    const profile = await prisma.profile.delete({
-      where: { userId: userId },
-    });
-    return profile;
+      });
+      return profile;
+    }
+
+    /**
+     * Update financial data
+     */
   }
 }
 

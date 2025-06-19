@@ -4,7 +4,7 @@ import ProfileService from './service';
 import {
   IGetProfileSchema,
   IUpdateProfileSchema,
-  IDeleteProfileSchema,
+  ICheckUsernameAvailabilitySchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
 
@@ -68,10 +68,34 @@ export class ProfileController {
     }
   }
   /**
+   * check username availability
+   */
+  async checkUsernameAvailability(
+    req: Request<unknown, ICheckUsernameAvailabilitySchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      const isAvailable = await this.ProfileService.isUsernameAvailable(
+        req.body.username,
+        userId,
+      );
+      res.send(
+        new HttpResponse({
+          message: 'Username availability checked successfully',
+          data: { isAvailable },
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
    * Update user profile
    */
   async updateProfile(
-    req: Request<IGetProfileSchema, unknown, IUpdateProfileSchema>,
+    req: Request<unknown, IUpdateProfileSchema>,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
@@ -87,26 +111,6 @@ export class ProfileController {
         new HttpResponse({
           message: 'User profile updated successfully',
           data: profile,
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
-  /**
-   * Delete user profile
-   */
-  async deleteProfile(
-    req: Request<IDeleteProfileSchema>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    try {
-      const userId = req.user.id;
-      await this.ProfileService.deleteProfile(userId);
-      res.send(
-        new HttpResponse({
-          message: 'User profile deleted successfully',
         }),
       );
     } catch (error) {
