@@ -122,7 +122,7 @@ class AuthService {
         id: user.id,
         email: user.email,
         profile: {
-          id: user.userProfile.id,
+          id: user.id,
         },
       },
       accessToken,

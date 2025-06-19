@@ -6,9 +6,9 @@ class ProfileService {
   /**
    * Get profile by user ID
    */
-  async getUserProfile(profileId: string, userId: string) {
+  async getUserProfile(userId: string) {
     const profile = await prisma.profile.findFirst({
-      where: { id: profileId, userId },
+      where: { userId: userId },
       include: {
         user: {
           select: {
@@ -27,15 +27,21 @@ class ProfileService {
   async uploadProfileImage(userId: string, filename: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      include: {
+        userProfile: true,
+      },
     });
     if (!user) {
       throw new HttpException(400, 'User not found');
     }
+    if (!user.userProfile) {
+      throw new HttpException(400, 'User profile not found');
+    }
 
-    await prisma.user.update({
-      where: { id: userId },
+    const profile = await prisma.profile.update({
+      where: { id: user.userProfile.id },
       data: {
-        profile: filename,
+        image: filename,
       },
     });
 
@@ -45,20 +51,35 @@ class ProfileService {
    * Update user profile
    */
   async updateProfile(
-    profileId: string,
     userId: string,
     data: IUpdateProfileSchema,
+    file?: Express.Multer.File,
   ) {
+    const updateData: any = {
+      firstname: data.firstName,
+      lastname: data.lastName,
+      username: data.userName,
+    };
+
+    // If a file is uploaded, use its filename as the image
+    if (file) {
+      updateData.image = file.filename;
+    } else if (data.image) {
+      // If no file but image path provided in data
+      updateData.image = data.image;
+    }
+
     const profile = await prisma.profile.update({
-      where: { id: profileId, userId },
-      data: {
-        firstname: data.firstName,
-        lastname: data.lastName,
-        username: data.userName,
-        image: data.image,
-      },
+      where: { userId: userId },
+      data: updateData,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            isVerified: true,
+          },
+        },
       },
     });
     return profile;

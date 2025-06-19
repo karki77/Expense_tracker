@@ -10,15 +10,16 @@ import upload from '../../utils/multer';
 const profileRouter = Router();
 
 profileRouter.get(
-  '/getuser-profile/:profileId',
+  '/getuser-profile/:userId',
   authMiddleware,
   paramValidator(getProfileSchema),
   ProfileController.getUserProfile.bind(ProfileController),
 );
 
 profileRouter.patch(
-  '/update-profile/:profileId',
+  '/update-profile/:userId',
   authMiddleware,
+  upload.single('file'),
   paramValidator(getProfileSchema),
   bodyValidator(updateProfileSchema),
   ProfileController.updateProfile.bind(ProfileController),

@@ -16,11 +16,7 @@ export class ProfileController {
   ): Promise<void> {
     try {
       const userId = req.user.id;
-      const profileId = req.params.profileId;
-      const profile = await this.ProfileService.getUserProfile(
-        profileId,
-        userId,
-      );
+      const profile = await this.ProfileService.getUserProfile(userId);
       res.send(
         new HttpResponse({
           message: 'User profile retrieved successfully',
@@ -31,32 +27,7 @@ export class ProfileController {
       next(error);
     }
   }
-  /**
-   * Update user profile
-   */
-  async updateProfile(
-    req: Request<IGetProfileSchema, unknown, IUpdateProfileSchema>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    try {
-      const userId = req.user.id;
-      const profileId = req.params.profileId;
-      const profile = await this.ProfileService.updateProfile(
-        profileId,
-        userId,
-        req.body,
-      );
-      res.send(
-        new HttpResponse({
-          message: 'User profile updated successfully',
-          data: profile,
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
+
   /**
    * Upload Profile Image
    */
@@ -92,5 +63,32 @@ export class ProfileController {
       next(error);
     }
   }
+  /**
+   * Update user profile
+   */
+  async updateProfile(
+    req: Request<IGetProfileSchema, unknown, IUpdateProfileSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+
+      const profile = await this.ProfileService.updateProfile(
+        userId,
+        req.body,
+        req.file,
+      );
+      res.send(
+        new HttpResponse({
+          message: 'User profile updated successfully',
+          data: profile,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
 export default new ProfileController();
