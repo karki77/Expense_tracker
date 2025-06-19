@@ -6,6 +6,7 @@ import {
   getProfileSchema,
   updateProfileSchema,
   deleteProfileSchema,
+  checkUsernameAvailabilitySchema,
 } from './validation';
 import { authMiddleware } from '../../middleware/authMiddleware';
 
@@ -26,6 +27,14 @@ profileRouter.post(
   upload.single('file'),
   ProfileController.uploadProfileImage.bind(ProfileController),
 );
+
+profileRouter.post(
+  '/check-username-availability',
+  authMiddleware,
+  bodyValidator(checkUsernameAvailabilitySchema),
+  ProfileController.checkUsernameAvailability.bind(ProfileController),
+);
+
 profileRouter.patch(
   '/update-profile/:userId',
   authMiddleware,
@@ -33,13 +42,6 @@ profileRouter.patch(
   paramValidator(getProfileSchema),
   bodyValidator(updateProfileSchema),
   ProfileController.updateProfile.bind(ProfileController),
-);
-
-profileRouter.delete(
-  '/delete-profile/:userId',
-  authMiddleware,
-  paramValidator(deleteProfileSchema),
-  ProfileController.deleteProfile.bind(ProfileController),
 );
 
 export default profileRouter;

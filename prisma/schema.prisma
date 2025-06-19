@@ -51,10 +51,10 @@ model Profile {
   username          String   @unique
   image             String
   totalExpenses     Float    @default(0)
-  totalBudget       Float    @default(0)
+  totalIncomes       Float    @default(0)
   currentBalance    Float    @default(0)
   monthlyExpenses   Float    @default(0)
-  monthlyBudget     Float    @default(0)
+  monthlyIncomes    Float    @default(0)
   monthlyBalance    Float    @default(0)
   isOverBudget      Boolean  @default(false)
   isUnderBudget     Boolean  @default(false)
