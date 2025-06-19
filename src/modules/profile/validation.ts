@@ -24,5 +24,12 @@ export const updateProfileSchema = z
       'Only firstName, lastName, userName, and image are allowed to be updated',
   });
 
+export const deleteProfileSchema = z.object({
+  userId: z
+    .string({ required_error: 'User ID is required' })
+    .uuid({ message: 'Invalid User ID' }),
+});
+
 export type IGetProfileSchema = z.infer<typeof getProfileSchema>;
 export type IUpdateProfileSchema = z.infer<typeof updateProfileSchema>;
+export type IDeleteProfileSchema = z.infer<typeof deleteProfileSchema>;
