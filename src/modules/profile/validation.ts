@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 export const getProfileSchema = z
   .object({
-    profileId: z
-      .string({ required_error: 'Profile ID is required' })
-      .uuid({ message: 'Invalid Profile ID' }),
+    userId: z
+      .string({ required_error: 'User ID is required' })
+      .uuid({ message: 'Invalid User ID' }),
   })
   .strict({
     message: 'Only user ID is allowed to be passed',
@@ -21,7 +21,7 @@ export const updateProfileSchema = z
   })
   .strict({
     message:
-      'Only first name, last name, username, and image are allowed to be updated',
+      'Only firstName, lastName, userName, and image are allowed to be updated',
   });
 
 export type IGetProfileSchema = z.infer<typeof getProfileSchema>;
