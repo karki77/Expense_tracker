@@ -84,6 +84,15 @@ class ProfileService {
     });
     return profile;
   }
+  /**
+   * Delete user profile
+   */
+  async deleteProfile(userId: string) {
+    const profile = await prisma.profile.delete({
+      where: { userId: userId },
+    });
+    return profile;
+  }
 }
 
 export default new ProfileService();

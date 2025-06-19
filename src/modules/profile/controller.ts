@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '#utils/api/httpResponse';
 import ProfileService from './service';
-import { IGetProfileSchema, IUpdateProfileSchema } from './validation';
+import {
+  IGetProfileSchema,
+  IUpdateProfileSchema,
+  IDeleteProfileSchema,
+} from './validation';
 import HttpException from '../../utils/api/httpException';
 
 export class ProfileController {
@@ -83,6 +87,26 @@ export class ProfileController {
         new HttpResponse({
           message: 'User profile updated successfully',
           data: profile,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
+   * Delete user profile
+   */
+  async deleteProfile(
+    req: Request<IDeleteProfileSchema>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.user.id;
+      await this.ProfileService.deleteProfile(userId);
+      res.send(
+        new HttpResponse({
+          message: 'User profile deleted successfully',
         }),
       );
     } catch (error) {
