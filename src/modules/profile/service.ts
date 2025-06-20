@@ -141,13 +141,50 @@ class ProfileService {
 
     return profile;
   }
-
-  //17d4e5bd-6fba-45e6-8e97-e3b7d8eb5eef
-  //24e75219-4a8b-41f3-a7c8-7ede359cdae5
-
   /**
-   * Update financial data
+   * generate user financial summary
    */
-}
+  async generateFinancialSummary(userId: string) {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
+    const [expensetTotal, incomeTotal, monthlyExpense, monthlyIncome] =
+      await Promise.all([
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { userId },
+        }),
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { userId },
+        }),
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { userId, date: { gte: startOfMonth } },
+        }),
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { userId, createdAt: { gte: startOfMonth } },
+        }),
+      ]);
+
+    const totalIncomes = incomeTotal._sum.amount ?? 0;
+    const totalExpenses = expensetTotal._sum.amount ?? 0;
+    const monthlyIncomes = monthlyIncome._sum.amount ?? 0;
+    const monthlyExpenses = monthlyExpense._sum.amount ?? 0;
+
+    return {
+      userId,
+      totalIncomes,
+      totalExpenses,
+      currentBalance: totalIncomes - totalExpenses,
+      monthlyIncomes,
+      monthlyExpenses,
+      monthlyBalance: monthlyIncomes - monthlyExpenses,
+      isOVerBudget: monthlyExpenses > monthlyIncomes,
+      isOnBudget: monthlyExpenses === monthlyIncomes,
+      isUnderBudget: monthlyExpenses < monthlyIncomes,
+    };
+  }
+}
 export default new ProfileService();

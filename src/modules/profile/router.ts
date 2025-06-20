@@ -44,4 +44,11 @@ profileRouter.patch(
   ProfileController.updateProfile.bind(ProfileController),
 );
 
+profileRouter.get(
+  '/financial-summary/:userId',
+  authMiddleware,
+  paramValidator(getProfileSchema),
+  ProfileController.getFinancialSummary.bind(ProfileController),
+);
+
 export default profileRouter;
