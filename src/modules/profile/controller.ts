@@ -14,7 +14,7 @@ export class ProfileController {
    * Get user profile by Id
    */
   async getUserProfile(
-    req: Request<IGetProfileSchema>,
+    req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
