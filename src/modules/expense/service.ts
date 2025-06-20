@@ -10,6 +10,28 @@ import { pagination, getPageDocs } from '#utils/pagination/pagination';
 
 class ExpenseService {
   /**
+   * Private function: Only use as a utility function
+   * Get expense by id and user id
+   */
+  async _getExpenseById(expenseId: string, userId: string) {
+    const expense = await prisma.expense.findFirst({
+      where: {
+        id: expenseId,
+        userId,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (!expense) {
+      throw new HttpException(404, 'Expense not found');
+    }
+
+    return expense;
+  }
+
+  /**
    * Create a new expense
    */
   async addExpense(userId: string, data: IAddExpenseSchema) {
@@ -53,27 +75,7 @@ class ExpenseService {
 
     return newExpense;
   }
-  /**
-   * Private function: Only use as a utility function
-   * Get expense by id and user id
-   */
-  async _getExpenseById(expenseId: string, userId: string) {
-    const expense = await prisma.expense.findFirst({
-      where: {
-        id: expenseId,
-        userId,
-      },
-      include: {
-        category: true,
-      },
-    });
 
-    if (!expense) {
-      throw new HttpException(404, 'Expense not found');
-    }
-
-    return expense;
-  }
   /**
    * Get all expenses of a user
    */
@@ -109,6 +111,7 @@ class ExpenseService {
 
     return { expenses, docs };
   }
+
   /**
    * Update an expense
    */
@@ -143,6 +146,7 @@ class ExpenseService {
     });
     return updatedExpense;
   }
+
   /**
    * Delete an expense
    */

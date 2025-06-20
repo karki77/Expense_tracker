@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { prisma } from '../../config/setup/dbSetup';
 import HttpException from '../../utils/api/httpException';
+import { imageHandler } from '../../utils/imageHandler/imageHandler';
 
 class ProfileService {
   /**
@@ -87,9 +88,6 @@ class ProfileService {
     data: IUpdateProfileSchema,
     file?: Express.Multer.File,
   ) {
-    console.log('UpdateProfile called with userId:', userId);
-    console.log('Data received:', data);
-
     // Check if username is being updated and if it's available
     if (data.userName) {
       const isAvailable = await this.isUsernameAvailable(data.userName, userId);
@@ -110,42 +108,22 @@ class ProfileService {
 
     console.log('Existing profile found:', profileExists);
 
+    //handle profile image update
+    const updatedImageFilename = await imageHandler.updateProfileImage(
+      file,
+      profileExists.image,
+    );
+
     // Build update data - only include fields that are provided
     const updateData = {
       firstname: data.firstName,
       lastname: data.lastName,
       username: data.userName,
-      image: data.image,
+      image:
+        updatedImageFilename !== undefined ? updatedImageFilename : data.image,
     };
 
-    // Handle image update
-    if (file) {
-      // Delete old image file if it exists and is not empty
-      if (profileExists.image && profileExists.image.trim() !== '') {
-        const oldImagePath = path.join(
-          __dirname,
-          '../../../uploads',
-          profileExists.image,
-        );
-        try {
-          await fs.unlink(oldImagePath);
-          console.log(`Old image deleted: ${profileExists.image}`);
-        } catch (error) {
-          console.warn(
-            `Could not delete old image: ${profileExists.image}`,
-            error,
-          );
-          // Continue with update even if old image deletion fails
-        }
-      }
-
-      updateData.image = file.filename;
-    } else if (data.image !== undefined) {
-      // If no file but image path provided in data
-      updateData.image = data.image;
-    }
-
-    console.log('Update data:', updateData);
+    console.log('update data:', updateData);
 
     const profile = await prisma.profile.update({
       where: { userId: userId },
