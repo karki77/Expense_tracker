@@ -7,6 +7,7 @@ import {
   ICheckUsernameAvailabilitySchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
+import { prisma } from '../../config/setup/dbSetup';
 
 export class ProfileController {
   private ProfileService = ProfileService;
@@ -111,6 +112,24 @@ export class ProfileController {
         new HttpResponse({
           message: 'User profile updated successfully',
           data: profile,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get user financial summary
+   */
+  async getFinancialSummary(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.params.userId;
+      const summary = await ProfileService.generateFinancialSummary(userId);
+      res.send(
+        new HttpResponse({
+          message: 'Financial summary retrieved successfully',
+          data: summary,
         }),
       );
     } catch (error) {

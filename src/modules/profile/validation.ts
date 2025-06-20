@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { string, z } from 'zod';
 
 export const getProfileSchema = z
   .object({
@@ -66,6 +66,17 @@ export const updateFinancialDataSchema = z
       'Only totalExpenses, totalIncomes, monthlyExpenses, and monthlyIncomes are allowed to be updated',
   });
 
+export const topExpensesSchema = z.object({
+  category: z.string({
+    required_error: 'Category is required',
+    invalid_type_error: 'Category must be a string',
+  }),
+  amount: z.number({
+    required_error: 'Amount is required',
+    invalid_type_error: 'Amount must be a number',
+  }),
+});
+
 export type IGetProfileSchema = z.infer<typeof getProfileSchema>;
 export type IUpdateProfileSchema = z.infer<typeof updateProfileSchema>;
 export type IDeleteProfileSchema = z.infer<typeof deleteProfileSchema>;
@@ -75,3 +86,4 @@ export type ICheckUsernameAvailabilitySchema = z.infer<
 export type IUpdateFinancialDataSchema = z.infer<
   typeof updateFinancialDataSchema
 >;
+export type ITopExpensesSchema = z.infer<typeof topExpensesSchema>;
