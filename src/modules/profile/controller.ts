@@ -7,7 +7,10 @@ import {
   ICheckUsernameAvailabilitySchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
-import { prisma } from '../../config/setup/dbSetup';
+import {
+  IPaginationSchema,
+  paginationSchema,
+} from '#utils/validators/commonValidation';
 
 export class ProfileController {
   private ProfileService = ProfileService;
@@ -21,7 +24,8 @@ export class ProfileController {
   ): Promise<void> {
     try {
       const userId = req.user.id;
-      const profile = await this.ProfileService.getUserProfile(userId);
+      const query = paginationSchema.parse(req.query);
+      const profile = await this.ProfileService.getUserProfile(userId, query);
       res.send(
         new HttpResponse({
           message: 'User profile retrieved successfully',
@@ -125,7 +129,10 @@ export class ProfileController {
   async getFinancialSummary(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
-      const summary = await ProfileService.generateFinancialSummary(userId);
+      const summary = await ProfileService.generateFinancialSummary(
+        userId,
+        req.query as IPaginationSchema,
+      );
       res.send(
         new HttpResponse({
           message: 'Financial summary retrieved successfully',
