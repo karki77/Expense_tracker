@@ -15,6 +15,13 @@ import upload from '../../utils/multer';
 const profileRouter = Router();
 
 profileRouter.get(
+  '/financial-summary/:userId',
+  authMiddleware,
+  paramValidator(getProfileSchema),
+  ProfileController.getFinancialSummary.bind(ProfileController),
+);
+
+profileRouter.get(
   '/getuser-profile/:userId',
   authMiddleware,
   paramValidator(getProfileSchema),
@@ -42,13 +49,6 @@ profileRouter.patch(
   paramValidator(getProfileSchema),
   bodyValidator(updateProfileSchema),
   ProfileController.updateProfile.bind(ProfileController),
-);
-
-profileRouter.get(
-  '/financial-summary/:userId',
-  authMiddleware,
-  paramValidator(getProfileSchema),
-  ProfileController.getFinancialSummary.bind(ProfileController),
 );
 
 export default profileRouter;

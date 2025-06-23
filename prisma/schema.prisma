@@ -60,6 +60,7 @@ model Profile {
   isUnderBudget     Boolean  @default(false)
   isOnBudget        Boolean  @default(false)
   topExpenses       Json?
+  majorIncomes      Json?     //newly added 
 
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

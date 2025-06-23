@@ -28,7 +28,7 @@ expenseRouter.get(
 );
 
 expenseRouter.get(
-  '/user/:userId',
+  '/get-all-expenses/:userId',
   authMiddleware,
   paramsValidator(getAllExpensesSchema),
   ExpenseController.getAllExpenses.bind(ExpenseController),

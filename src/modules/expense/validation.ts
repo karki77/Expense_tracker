@@ -1,4 +1,5 @@
 import { z } from 'zod';
+const MIN_DATE = new Date('2024-01-01');
 export const addExpenseSchema = z
   .object({
     name: z
@@ -9,7 +10,15 @@ export const addExpenseSchema = z
       .number({ required_error: 'Amount is required' })
       .min(1, 'Amount must be greater than 0'),
 
-    date: z.string({ required_error: 'Date is required' }),
+    date: z.string({ required_error: 'Date is required' }).refine(
+      (val) => {
+        const parsed = new Date(val);
+        return !isNaN(parsed.getTime()) && parsed >= MIN_DATE;
+      },
+      {
+        message: 'Date must be on or after 2024-01-01',
+      },
+    ),
 
     categoryId: z.string({ required_error: 'CategoryId is required' }),
 
