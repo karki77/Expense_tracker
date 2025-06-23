@@ -10,13 +10,15 @@ class ProfileService {
    * Get profile by user ID
    */
   async getUserProfile(userId: string) {
-    console.log('Looking up profile with userId:', userId);
     const profile = await prisma.profile.findFirst({
-      where: { userId: userId },
+      where: { userId },
       include: {
         user: {
           select: {
             id: true,
+            firstname: true,
+            lastname: true,
+            username: true,
             email: true,
             isVerified: true,
             userProfile: {
@@ -31,7 +33,12 @@ class ProfileService {
     if (!profile) {
       throw new HttpException(404, 'Profile not found');
     }
-    return profile;
+    const financialSummary = await this.generateFinancialSummary(userId);
+
+    return {
+      user: profile.user,
+      financialSummary,
+    };
   }
   async uploadProfileImage(userId: string, filename: string) {
     const user = await prisma.user.findUnique({
@@ -148,25 +155,45 @@ class ProfileService {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const [expensetTotal, incomeTotal, monthlyExpense, monthlyIncome] =
-      await Promise.all([
-        prisma.expense.aggregate({
-          _sum: { amount: true },
-          where: { userId },
-        }),
-        prisma.income.aggregate({
-          _sum: { amount: true },
-          where: { userId },
-        }),
-        prisma.expense.aggregate({
-          _sum: { amount: true },
-          where: { userId, date: { gte: startOfMonth } },
-        }),
-        prisma.income.aggregate({
-          _sum: { amount: true },
-          where: { userId, createdAt: { gte: startOfMonth } },
-        }),
-      ]);
+    const [
+      expensetTotal,
+      incomeTotal,
+      monthlyExpense,
+      monthlyIncome,
+      topExpenses,
+    ] = await Promise.all([
+      prisma.expense.aggregate({
+        _sum: { amount: true },
+        where: { userId },
+      }),
+      prisma.income.aggregate({
+        _sum: { amount: true },
+        where: { userId },
+      }),
+      prisma.expense.aggregate({
+        _sum: { amount: true },
+        where: { userId, date: { gte: startOfMonth } },
+      }),
+      prisma.income.aggregate({
+        _sum: { amount: true },
+        where: { userId, createdAt: { gte: startOfMonth } },
+      }),
+      prisma.expense.findMany({
+        where: {
+          userId,
+          date: { gte: startOfMonth },
+        },
+        orderBy: {
+          amount: 'desc',
+        },
+        take: 5,
+        select: {
+          name: true,
+          amount: true,
+          date: true,
+        },
+      }),
+    ]);
 
     const totalIncomes = incomeTotal._sum.amount ?? 0;
     const totalExpenses = expensetTotal._sum.amount ?? 0;
@@ -184,6 +211,7 @@ class ProfileService {
       isOVerBudget: monthlyExpenses > monthlyIncomes,
       isOnBudget: monthlyExpenses === monthlyIncomes,
       isUnderBudget: monthlyExpenses < monthlyIncomes,
+      topExpenses,
     };
   }
 }
