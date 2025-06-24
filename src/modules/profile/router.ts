@@ -9,6 +9,7 @@ import {
   checkUsernameAvailabilitySchema,
 } from './validation';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { authMiddlewarewithRedis } from '../../middleware/authMiddleware';
 
 import upload from '../../utils/multer';
 
@@ -16,7 +17,7 @@ const profileRouter = Router();
 
 profileRouter.get(
   '/financial-summary/:userId',
-  authMiddleware,
+  authMiddlewarewithRedis,
   paramValidator(getProfileSchema),
   ProfileController.getFinancialSummary.bind(ProfileController),
 );

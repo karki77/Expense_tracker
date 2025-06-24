@@ -13,7 +13,12 @@ export const addExpenseSchema = z
     date: z.string({ required_error: 'Date is required' }).refine(
       (val) => {
         const parsed = new Date(val);
-        return !isNaN(parsed.getTime()) && parsed >= MIN_DATE;
+        const now = new Date();
+        return (
+          !isNaN(parsed.getTime()) && // valid date
+          parsed >= MIN_DATE && // not before Jan 1, 2024
+          parsed <= now // not in the future
+        );
       },
       {
         message: 'Date must be on or after 2024-01-01',

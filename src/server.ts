@@ -2,18 +2,13 @@ import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import express, { static as serveStatic } from 'express';
 
-import config from './config/setup/envConfig';
+import envConfig from './config/setup/envConfig';
 import { logger, morganLogger } from './utils/logger';
 import appRouter from './router';
 import globalErrorHandler from './middleware/globalErrorHandler';
-// type
-
-// utilty
-
-// validatator
 
 const prisma = new PrismaClient();
-const PORT = config.server.port || 7000;
+const PORT = envConfig.server.port || 7000;
 
 const app = express();
 

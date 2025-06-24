@@ -12,6 +12,7 @@ import {
 } from './validation';
 import authController from './controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { authMiddlewarewithRedis } from '../../middleware/authMiddleware';
 import upload from '../../utils/multer';
 
 const authrouter = Router();
@@ -52,6 +53,12 @@ authrouter.post(
   queryValidator(tokenSchema),
   bodyValidator(resetPasswordSchema),
   authController.resetPassword.bind(authController),
+);
+
+authrouter.post(
+  '/logout',
+  authMiddlewarewithRedis,
+  authController.logoutUser.bind(authController),
 );
 
 export default authrouter;
