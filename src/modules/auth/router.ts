@@ -11,9 +11,7 @@ import {
   resetPasswordSchema,
 } from './validation';
 import authController from './controller';
-import { authMiddleware } from '../../middleware/authMiddleware';
-import { authMiddlewarewithRedis } from '../../middleware/authMiddleware';
-import upload from '../../utils/multer';
+import authMiddleware from '../../middleware/authMiddleware';
 
 const authrouter = Router();
 
@@ -37,7 +35,7 @@ authrouter.post(
 
 authrouter.patch(
   '/change-password',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   bodyValidator(changePasswordSchema),
   authController.changePassword.bind(authController),
 );
@@ -57,7 +55,7 @@ authrouter.post(
 
 authrouter.post(
   '/logout',
-  authMiddlewarewithRedis,
+  authMiddleware.authMiddlewareWithRedis,
   authController.logoutUser.bind(authController),
 );
 
