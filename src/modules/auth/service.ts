@@ -14,7 +14,12 @@ import { sendPasswordResetConfirmationEmail } from '../../utils/email/passwordRe
 import { generateToken } from '../../middleware/authMiddleware';
 import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
+import Redis from 'ioredis';
+import envConfig from '../../config/setup/envConfig';
 import { prisma } from '../../config/setup/dbSetup';
+import jwt from 'jsonwebtoken';
+
+const redis = new Redis(envConfig.redis.url || 'redis://localhost:6379');
 /**
  * Register a new user
  */
@@ -129,6 +134,33 @@ class AuthService {
       refreshToken,
     };
   }
+  /**
+   * Logout User with Redis blacklist
+   */
+  async logoutUser(userId: string, token: string) {
+    const decoded = jwt.decode(token) as any;
+
+    if (!decoded || !decoded.exp) {
+      throw new HttpException(400, 'Invalid token format');
+    }
+    // time for token expiration
+    const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+
+    if (ttl <= 0) {
+      throw new HttpException(400, 'Token already expired');
+    }
+    // add token to redis blacklist with TTl
+    const blacklistResult = await redis.setex(
+      `blacklist:${token}`,
+      ttl,
+      'true',
+    );
+
+    if (!blacklistResult) {
+      throw new HttpException(500, 'Failed to blacklist token');
+    }
+  }
+
   /**
    * Change Password
    */

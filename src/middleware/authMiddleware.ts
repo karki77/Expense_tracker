@@ -2,7 +2,11 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 import HttpException from '../utils/api/httpException';
+import Redis from 'ioredis';
+import envConfig from '../config/setup/envConfig';
+import { prisma } from '../config/setup/dbSetup';
 
+const redis = new Redis(envConfig.redis.url || 'redis://localhost:6379');
 // Define token payload type
 interface IUser {
   id: string;
@@ -82,5 +86,51 @@ export const verifyToken = (token: string): IUser => {
     return decoded;
   } catch (error) {
     throw new HttpException(401, 'Invalid or expired token');
+  }
+};
+
+export const authMiddlewarewithRedis = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const token: string =
+      req.headers.authorization?.replace('Bearer ', '') || req.cookies.token;
+
+    if (!token) {
+      throw new HttpException(401, 'No token provided');
+    }
+
+    // Check Redis blacklist
+    const isBlacklisted = await redis.get(`blacklist:${token}`);
+    if (isBlacklisted) {
+      throw new HttpException(401, 'Token has been invalidated');
+    }
+    //continue with normal jwt verification
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS!);
+
+    if (typeof decoded === 'string') {
+      throw new HttpException(401, 'Invalid token format');
+    }
+
+    // If your payload uses 'id' instead of 'userId'
+    const userId = (decoded as any).id || (decoded as any).userId;
+    if (!userId) {
+      throw new HttpException(401, 'Invalid token payload');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new HttpException(401, 'User not found');
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
   }
 };

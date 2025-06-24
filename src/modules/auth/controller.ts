@@ -87,6 +87,41 @@ export class AuthController {
   }
 
   /**
+   * Logout User with Redis Blacklist
+   */
+  async logoutUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token =
+        req.headers.authorization?.replace('Bearer ', '') || req.cookies.token;
+
+      if (!token) {
+        throw new HttpException(400, 'No token provided');
+      }
+
+      // Get user ID from the authenticated request
+      const userId = req.user?.id;
+
+      if (!userId) {
+        throw new HttpException(400, 'User ID not found');
+      }
+
+      // Call the logout service method
+      const result = await AuthService.logoutUser(userId, token);
+
+      // Clear refresh token cookie
+      res.clearCookie('refreshToken');
+      res.clearCookie('token'); // Clear token cookie if stored
+      res.send(
+        new HttpResponse({
+          message: 'User logged out successfully',
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Change Password
    */
   public async changePassword(

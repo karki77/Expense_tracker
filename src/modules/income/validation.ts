@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+const notInFuture = (val: string) => {
+  const parsed = Date.parse(val);
+  if (isNaN(parsed)) return false;
+  return new Date(parsed) <= new Date(); // Must not be in the future
+};
 export const addIncomeSchema = z
   .object({
     amount: z
@@ -8,12 +13,24 @@ export const addIncomeSchema = z
         invalid_type_error: 'Amount must be a number',
       })
       .min(1, { message: 'Amount must be greater than 0' }),
-    startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid start date',
-    }),
-    endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid end date',
-    }),
+    startDate: z
+      .string()
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: 'Invalid start date format',
+      })
+      .refine(notInFuture, {
+        message: 'Start date cannot be in the future',
+      }),
+
+    endDate: z
+      .string()
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: 'Invalid end date format',
+      })
+      .refine(notInFuture, {
+        message: 'End date cannot be in the future',
+      }),
+
     categoryId: z.string({
       required_error: 'Category is required',
       invalid_type_error: 'Category must be a string',
