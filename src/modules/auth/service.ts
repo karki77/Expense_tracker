@@ -11,7 +11,7 @@ import { generatePasswordResetLink } from './passwordResetLink';
 import { sendVerificationEmail } from '../../utils/email/verificationEmail';
 import { sendPasswordResetEmail } from '../../utils/email/passwordResetEmail';
 import { sendPasswordResetConfirmationEmail } from '../../utils/email/passwordResetConfirm';
-import { generateToken } from '../../middleware/authMiddleware';
+import { authMiddleware } from '../../middleware/authMiddleware';
 import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
 import Redis from 'ioredis';
@@ -20,6 +20,8 @@ import { prisma } from '../../config/setup/dbSetup';
 import jwt from 'jsonwebtoken';
 
 const redis = new Redis(envConfig.redis.url || 'redis://localhost:6379');
+
+const auth = new authMiddleware();
 /**
  * Register a new user
  */
@@ -121,7 +123,7 @@ class AuthService {
     if (!isPasswordValid) {
       throw new HttpException(401, 'Invalid email or password');
     }
-    const { accessToken, refreshToken } = generateToken(user);
+    const { accessToken, refreshToken } = auth.generateTokens(user);
     return {
       user: {
         id: user.id,

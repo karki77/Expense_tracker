@@ -9,34 +9,34 @@ import {
   updateIncomeSchema,
   deleteIncomeSchema,
 } from './validation';
-import { authMiddleware } from '../../middleware/authMiddleware';
+import authMiddleware from '../../middleware/authMiddleware';
 
 const incomeRouter = Router();
 
 incomeRouter.post(
   '/add-income',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   bodyValidator(addIncomeSchema),
   IncomeController.addIncome.bind(IncomeController),
 );
 
 incomeRouter.get(
   '/get-income/:incomeId',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   paramValidator(getIncomeByIdSchema),
   IncomeController.getIncomeById.bind(IncomeController),
 );
 
 incomeRouter.get(
   '/get-all-incomes/:userId',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   paramValidator(getAllUserIncomesSchema),
   IncomeController.getallUserIncomes.bind(IncomeController),
 );
 
 incomeRouter.patch(
   '/update-income/:incomeId',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   paramValidator(getIncomeByIdSchema),
   bodyValidator(updateIncomeSchema),
   IncomeController.updateIncome.bind(IncomeController),
@@ -44,7 +44,7 @@ incomeRouter.patch(
 
 incomeRouter.delete(
   '/delete-income/:incomeId',
-  authMiddleware,
+  authMiddleware.authMiddleware,
   paramValidator(deleteIncomeSchema),
   IncomeController.deleteIncome.bind(IncomeController),
 );
