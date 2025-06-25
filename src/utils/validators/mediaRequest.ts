@@ -13,7 +13,6 @@ export const mediaRequest = (
 ) => {
   try {
     const file = req?.file;
-    const bio = req.body?.bio;
 
     if (!file) {
       throw new HttpException(400, 'File is required');
@@ -21,7 +20,6 @@ export const mediaRequest = (
 
     const payload = {
       image: file?.filename,
-      bio,
     };
 
     req.body = payload;

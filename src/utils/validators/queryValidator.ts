@@ -1,6 +1,4 @@
 import { ZodError } from 'zod';
-
-//
 import type { ZodTypeAny } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
 
@@ -31,5 +29,4 @@ const queryValidator =
     }
   };
 
-//
 export default queryValidator;

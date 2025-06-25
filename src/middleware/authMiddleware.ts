@@ -83,25 +83,31 @@ export class authMiddleware {
     next: NextFunction,
   ) => {
     try {
-      const token =
-        req.headers.authorization?.replace('Bearer ', '') || req.cookies.token;
-      if (!token) throw new HttpException(401, 'No token provided');
-
+      // Check for token in Authorization header or cookies
+      const authHeader = req.headers.authorization;
+      const token = authHeader?.startsWith('Bearer ')
+        ? authHeader.split(' ')[1]
+        : req.cookies.token;
+      if (!token) {
+        throw new HttpException(401, 'No token provided');
+      }
+      // Check if token is blacklisted in Redis
       const isBlacklisted = await this.redis.get(`blacklist:${token}`);
       if (isBlacklisted)
         throw new HttpException(401, 'Token has been invalidated');
 
+      // Verify the token
       const decoded = jwt.verify(
         token,
         process.env.JWT_SECRET_ACCESS!,
       ) as IUser;
       if (typeof decoded === 'string')
         throw new HttpException(401, 'Invalid token format');
-
+      // Fetch user from database
       const user = await prisma.user.findUnique({ where: { id: decoded.id } });
       if (!user) throw new HttpException(401, 'User not found');
 
-      req.user = { id: user.id, email: user.email }; // Only expose needed fields
+      req.user = { id: user.id, email: user.email };
       next();
     } catch (err) {
       next(err);
