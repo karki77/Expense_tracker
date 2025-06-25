@@ -62,7 +62,7 @@ export const updateExpenseSchema = z
     description: z.string().optional(),
   })
   .strict({
-    message: 'only the fields that are provided will be updated',
+    message: 'only the fields name, amount, date, description can be updated',
   });
 
 export const deleteExpenseSchema = z.object({

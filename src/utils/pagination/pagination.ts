@@ -25,7 +25,7 @@ export const getPageDocs = (data: PageDocProps): IPaginationResponse => {
   return {
     total: {
       page,
-      limit: data.count,
+      limit: data.limit,
     },
     next: {
       page: data.page + 1 > page ? null : data.page + 1,

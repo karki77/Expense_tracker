@@ -24,8 +24,7 @@ export class ProfileController {
   ): Promise<void> {
     try {
       const userId = req.user.id;
-      const query = paginationSchema.parse(req.query);
-      const profile = await this.ProfileService.getUserProfile(userId, query);
+      const profile = await this.ProfileService.getUserProfile(userId);
       res.send(
         new HttpResponse({
           message: 'User profile retrieved successfully',
@@ -129,14 +128,31 @@ export class ProfileController {
   async getFinancialSummary(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
-      const summary = await ProfileService.generateFinancialSummary(
+      const summary = await ProfileService.generateFinancialSummary(userId);
+      res.send(
+        new HttpResponse({
+          message: 'Financial summary retrieved successfully',
+          data: summary,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
+   * Get top expenses
+   */
+  async getTopExpenses(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.params.userId;
+      const topExpenses = await ProfileService.getTopExpenses(
         userId,
         req.query as IPaginationSchema,
       );
       res.send(
         new HttpResponse({
-          message: 'Financial summary retrieved successfully',
-          data: summary,
+          message: 'Top expenses retrieved successfully',
+          data: topExpenses,
         }),
       );
     } catch (error) {
