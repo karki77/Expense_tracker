@@ -50,4 +50,11 @@ profileRouter.patch(
   ProfileController.updateProfile.bind(ProfileController),
 );
 
+profileRouter.get(
+  '/get-top-expenses/:userId',
+  authMiddleware.authMiddlewareWithRedis,
+  paramValidator(getProfileSchema),
+  ProfileController.getTopExpenses.bind(ProfileController),
+);
+
 export default profileRouter;

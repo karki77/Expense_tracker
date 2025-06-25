@@ -1,19 +1,15 @@
 import { IUpdateProfileSchema } from './validation';
-import path from 'path';
-import fs from 'fs/promises';
 import { prisma } from '../../config/setup/dbSetup';
 import HttpException from '../../utils/api/httpException';
 import { imageHandler } from '../../utils/imageHandler/imageHandler';
-import { pagination, getPageDocs } from '#utils/pagination/pagination';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
-import e from 'express';
-import { query } from 'winston';
+import { pagination, getPageDocs } from '../../utils/pagination/pagination';
 
 class ProfileService {
   /**
    * Get profile by user ID
    */
-  async getUserProfile(userId: string, query: IPaginationSchema) {
+  async getUserProfile(userId: string) {
     const profile = await prisma.profile.findFirst({
       where: { userId },
       include: {
@@ -37,10 +33,7 @@ class ProfileService {
     if (!profile) {
       throw new HttpException(404, 'Profile not found');
     }
-    const financialSummary = await this.generateFinancialSummary(
-      userId,
-      query || {},
-    );
+    const financialSummary = await this.generateFinancialSummary(userId);
 
     return {
       user: profile.user,
@@ -158,102 +151,35 @@ class ProfileService {
   /**
    * generate user financial summary
    */
-  async generateFinancialSummary(userId: string, query: IPaginationSchema) {
+  async generateFinancialSummary(userId: string) {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    // pagination setup for both expenses and incomes
-    const paginationConfig = pagination({
-      limit: query.limit,
-      page: query.page,
-    });
 
-    const [
-      expensetTotal,
-      incomeTotal,
-      monthlyExpense,
-      monthlyIncome,
-      topExpenses,
-      topIncomes,
-      monthlyExpensesCount,
-      monthlyIncomesCount,
-    ] = await Promise.all([
-      prisma.expense.aggregate({
-        _sum: { amount: true },
-        where: { userId },
-      }),
-      prisma.income.aggregate({
-        _sum: { amount: true },
-        where: { userId },
-      }),
-      prisma.expense.aggregate({
-        _sum: { amount: true },
-        where: { userId, date: { gte: startOfMonth } },
-      }),
-      prisma.income.aggregate({
-        _sum: { amount: true },
-        where: { userId, createdAt: { gte: startOfMonth } },
-      }),
-      // paginate top expenses
-      prisma.expense.findMany({
-        where: {
-          userId,
-          date: { gte: startOfMonth },
-        },
-        orderBy: {
-          amount: 'desc',
-        },
-        take: paginationConfig.limit,
-        skip: paginationConfig.skip,
-        select: {
-          name: true,
-          amount: true,
-          date: true,
-        },
-      }),
-      //paginate top incomes
-      prisma.income.findMany({
-        where: {
-          userId,
-          createdAt: { gte: startOfMonth },
-        },
-        orderBy: {
-          amount: 'desc',
-        },
-        take: paginationConfig.limit,
-        skip: paginationConfig.skip,
-        select: {
-          amount: true,
-          createdAt: true,
-          isRecurring: true,
-          period: true,
-        },
-      }),
-      prisma.expense.count({
-        where: { userId, date: { gte: startOfMonth } },
-      }),
-      prisma.income.count({
-        where: { userId, createdAt: { gte: startOfMonth } },
-      }),
-    ]);
+    const [expensetTotal, incomeTotal, monthlyExpense, monthlyIncome] =
+      await Promise.all([
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { userId },
+        }),
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { userId },
+        }),
+        prisma.expense.aggregate({
+          _sum: { amount: true },
+          where: { userId, date: { gte: startOfMonth } },
+        }),
+        prisma.income.aggregate({
+          _sum: { amount: true },
+          where: { userId, createdAt: { gte: startOfMonth } },
+        }),
+      ]);
 
     const totalIncomes = incomeTotal._sum.amount ?? 0;
     const totalExpenses = expensetTotal._sum.amount ?? 0;
     const monthlyIncomes = monthlyIncome._sum.amount ?? 0;
     const monthlyExpenses = monthlyExpense._sum.amount ?? 0;
 
-    //generate pagination docs for expenses
-    const expensesDocs = getPageDocs({
-      page: paginationConfig.page,
-      limit: paginationConfig.limit,
-      count: monthlyExpensesCount,
-    });
-
-    // Generate pagination docs for incomes
-    const incomesDocs = getPageDocs({
-      page: paginationConfig.page,
-      limit: paginationConfig.limit,
-      count: monthlyIncomesCount,
-    });
     return {
       userId,
       totalIncomes,
@@ -265,15 +191,61 @@ class ProfileService {
       isOVerBudget: monthlyExpenses > monthlyIncomes,
       isOnBudget: monthlyExpenses === monthlyIncomes,
       isUnderBudget: monthlyExpenses < monthlyIncomes,
-      topExpenses: {
-        data: topExpenses,
-        pagination: expensesDocs,
-      },
-      topIncomes: {
-        data: topIncomes,
-        pagination: incomesDocs,
-      },
+    };
+  }
+  /*
+   * get top expenses
+   */
+
+  async getTopExpenses(userId: string, query: IPaginationSchema) {
+    const paginationConfig = pagination({
+      limit: query.limit,
+      page: query.page,
+    });
+
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // Execute queries
+    const [topExpenses, totalCount] = await Promise.all([
+      prisma.expense.findMany({
+        where: {
+          userId,
+          date: { gte: startOfMonth },
+        },
+        orderBy: {
+          amount: 'desc',
+        },
+        take: paginationConfig.limit,
+        skip: paginationConfig.skip,
+        select: {
+          id: true,
+          name: true,
+          amount: true,
+          date: true,
+          category: true,
+        },
+      }),
+      prisma.expense.count({
+        where: {
+          userId,
+          date: { gte: startOfMonth },
+        },
+      }),
+    ]);
+
+    // Generate pagination docs
+    const paginationDocs = getPageDocs({
+      page: paginationConfig.page,
+      limit: paginationConfig.limit,
+      count: totalCount,
+    });
+
+    return {
+      topExpenses,
+      pagination: paginationDocs,
     };
   }
 }
+
 export default new ProfileService();
