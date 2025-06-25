@@ -47,7 +47,6 @@ const errorMiddleware = (
       // stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
-
   // For any other type of error
   return res.status(500).json({
     success: false,

@@ -102,7 +102,6 @@ class AuthService {
       },
     });
   }
-
   /**
    * Login User
    */
@@ -162,11 +161,9 @@ class AuthService {
       throw new HttpException(500, 'Failed to blacklist token');
     }
   }
-
   /**
    * Change Password
    */
-
   async changePassword(userId: string, data: IChangePasswordSchema) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -198,7 +195,6 @@ class AuthService {
       },
     });
   }
-
   /**
    * Forget Password
    */
@@ -211,8 +207,8 @@ class AuthService {
     }
     const resetToken = randomBytes(32).toString('hex');
     const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
-    //save token to db
 
+    //save token to db
     await prisma.user.update({
       where: { id: user.id },
       data: {

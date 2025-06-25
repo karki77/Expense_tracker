@@ -14,7 +14,6 @@ import AuthService from './service';
 
 export class AuthController {
   private authService = AuthService;
-
   /**
    * Register User
    */
@@ -41,7 +40,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Verify Email
    */
@@ -64,7 +62,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Login User
    */
@@ -85,7 +82,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Logout User with Redis Blacklist
    */
@@ -120,7 +116,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Change Password
    */
@@ -142,7 +137,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Forget Password
    */
@@ -162,7 +156,6 @@ export class AuthController {
       next(error);
     }
   }
-
   /**
    * Reset Password
    */
@@ -183,4 +176,5 @@ export class AuthController {
     }
   }
 }
+
 export default new AuthController();

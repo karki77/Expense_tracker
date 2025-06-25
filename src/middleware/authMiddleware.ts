@@ -23,7 +23,6 @@ declare global {
 }
 
 export type ITokenType = 'REFRESH_TOKEN' | 'ACCESS_TOKEN';
-
 export class authMiddleware {
   private redis: Redis;
 

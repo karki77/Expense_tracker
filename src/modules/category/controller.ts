@@ -9,10 +9,8 @@ import CategoryService from './service';
 import { HttpResponse } from '../../utils/api/httpResponse';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import { CategoryType } from '@prisma/client';
-
 class CategoryController {
   private categoryService = CategoryService;
-
   /**
    * Get category by Id
    */
@@ -81,7 +79,6 @@ class CategoryController {
       next(error);
     }
   }
-
   /**
    * Create a new category
    */
@@ -96,7 +93,6 @@ class CategoryController {
         req.body,
         userId,
       );
-
       res.send(
         new HttpResponse({
           message: 'Category created successfully',

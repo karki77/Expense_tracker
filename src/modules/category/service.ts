@@ -135,7 +135,6 @@ class CategoryService {
     }
     return category;
   }
-
   /**
    * Update a category
    */

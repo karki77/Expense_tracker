@@ -8,7 +8,6 @@ const globalErrorHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   const statusCode = err.status ?? 500;
-
   // Log the error
   logger.error(
     JSON.stringify({
