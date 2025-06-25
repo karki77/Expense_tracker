@@ -31,7 +31,6 @@ export class ProfileController {
       next(error);
     }
   }
-
   /**
    * Upload Profile Image
    */
