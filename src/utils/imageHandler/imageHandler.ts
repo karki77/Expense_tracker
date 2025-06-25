@@ -30,12 +30,9 @@ export class ImageHandler {
     if (!newFile) {
       return undefined; // no new image to update
     }
-
-    // Delete old image if exists
     if (oldImageFilename) {
       await this.deleteOldImage(oldImageFilename);
     }
-    //return new image filename
     return newFile.filename;
   }
 }

@@ -2,16 +2,13 @@ export interface CreateCategoryRequest {
   name: string;
   description: string;
 }
-
 export interface UpdateCategoryRequest {
   name?: string;
   description?: string;
 }
-
 export interface DeleteCategoryRequest {
   id: string;
 }
-
 export interface CategoryResponse {
   id: string;
   name: string;
@@ -24,7 +21,6 @@ export interface CategoryResponse {
     budgets: number;
   };
 }
-
 export interface CategoryWithStats extends CategoryResponse {
   totalExpenses: number;
   expenseCount: number;

@@ -4,7 +4,6 @@ import HttpException from '../../utils/api/httpException';
 import { imageHandler } from '../../utils/imageHandler/imageHandler';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import { pagination, getPageDocs } from '../../utils/pagination/pagination';
-
 class ProfileService {
   /**
    * Get profile by user ID
@@ -57,7 +56,6 @@ class ProfileService {
         image: filename,
       },
     });
-
     return { filename };
   }
   /**
@@ -145,7 +143,6 @@ class ProfileService {
         },
       },
     });
-
     return profile;
   }
   /**
@@ -174,12 +171,10 @@ class ProfileService {
           where: { userId, createdAt: { gte: startOfMonth } },
         }),
       ]);
-
     const totalIncomes = incomeTotal._sum.amount ?? 0;
     const totalExpenses = expensetTotal._sum.amount ?? 0;
     const monthlyIncomes = monthlyIncome._sum.amount ?? 0;
     const monthlyExpenses = monthlyExpense._sum.amount ?? 0;
-
     return {
       userId,
       totalIncomes,
@@ -196,16 +191,13 @@ class ProfileService {
   /*
    * get top expenses
    */
-
   async getTopExpenses(userId: string, query: IPaginationSchema) {
     const paginationConfig = pagination({
       limit: query.limit,
       page: query.page,
     });
-
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
     // Execute queries
     const [topExpenses, totalCount] = await Promise.all([
       prisma.expense.findMany({
@@ -233,14 +225,12 @@ class ProfileService {
         },
       }),
     ]);
-
     // Generate pagination docs
     const paginationDocs = getPageDocs({
       page: paginationConfig.page,
       limit: paginationConfig.limit,
       count: totalCount,
     });
-
     return {
       topExpenses,
       pagination: paginationDocs,

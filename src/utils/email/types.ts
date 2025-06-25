@@ -4,5 +4,3 @@ export interface IEmailSend {
   text: string;
   html: string;
 }
-
-// register -> username, IRegisterEmailTemplate {fullName: string}

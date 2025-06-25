@@ -10,7 +10,6 @@ import type {
 
 import ExpenseService from './service';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
-
 export class ExpenseController {
   private expenseService = ExpenseService;
   /**
@@ -34,7 +33,6 @@ export class ExpenseController {
       next(error);
     }
   }
-
   /**
    * Get expense by id and user id
    */
@@ -74,7 +72,6 @@ export class ExpenseController {
         userId,
         req.query as IPaginationSchema,
       );
-
       res.send(
         new HttpResponse({
           message: 'Expenses retrieved successfully',

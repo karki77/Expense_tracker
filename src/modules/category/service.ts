@@ -52,11 +52,9 @@ class CategoryService {
     }
     return categories;
   }
-
   /**
    * Get all categories with pagination
    */
-
   async getallCategories(
     userId: string,
     query: IPaginationSchema & { type: CategoryType },
@@ -97,11 +95,9 @@ class CategoryService {
 
     return { categories, docs };
   }
-
   /**
    * create a custom category
    */
-
   async createCategory(data: ICreateCategorySchema, userId: string) {
     const existingCategory = await prisma.category.findUnique({
       where: {
@@ -137,7 +133,6 @@ class CategoryService {
     if (!category) {
       throw new HttpException(404, 'Category not found');
     }
-
     return category;
   }
 

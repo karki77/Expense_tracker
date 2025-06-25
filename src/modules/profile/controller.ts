@@ -2,15 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { HttpResponse } from '#utils/api/httpResponse';
 import ProfileService from './service';
 import {
-  IGetProfileSchema,
   IUpdateProfileSchema,
   ICheckUsernameAvailabilitySchema,
 } from './validation';
 import HttpException from '../../utils/api/httpException';
-import {
-  IPaginationSchema,
-  paginationSchema,
-} from '#utils/validators/commonValidation';
+import { IPaginationSchema } from '#utils/validators/commonValidation';
 
 export class ProfileController {
   private ProfileService = ProfileService;
@@ -121,7 +117,6 @@ export class ProfileController {
       next(error);
     }
   }
-
   /**
    * Get user financial summary
    */

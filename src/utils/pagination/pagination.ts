@@ -11,8 +11,6 @@ export const pagination = (data: PaginationProps) => {
   const limit = data?.limit ? Number(data?.limit) : 10;
   const page = data?.page ? Number(data?.page) : 1;
   const skip = limit * (page - 1);
-
-  //
   return { limit, skip, page };
 };
 

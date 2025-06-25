@@ -1,5 +1,4 @@
 import { HTTPSTATUS } from '../enums/httpResponse';
-
 class HttpException extends Error {
   public readonly status: HTTPSTATUS;
   public readonly message: string;

@@ -5,7 +5,6 @@ import ProfileController from './controller';
 import {
   getProfileSchema,
   updateProfileSchema,
-  deleteProfileSchema,
   checkUsernameAvailabilitySchema,
 } from './validation';
 import authMiddleware from '../../middleware/authMiddleware';

@@ -9,7 +9,6 @@ import type {
 } from './validation';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import IncomeService from './service';
-
 export class IncomeController {
   private IncomeService = IncomeService;
   /**
@@ -33,7 +32,6 @@ export class IncomeController {
       next(error);
     }
   }
-
   /**
    * get income by id
    */
@@ -56,7 +54,6 @@ export class IncomeController {
       next(error);
     }
   }
-
   /**
    * get all incomes
    */
@@ -81,7 +78,6 @@ export class IncomeController {
       next(error);
     }
   }
-
   /**
    * update income
    */
@@ -108,7 +104,6 @@ export class IncomeController {
       next(error);
     }
   }
-
   /**
    * delete income
    */

@@ -3,7 +3,6 @@ import type { AddIncomeSchema, UpdateIncomeSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
 import { IPaginationSchema } from '#utils/validators/commonValidation';
 import { pagination, getPageDocs } from '#utils/pagination/pagination';
-
 class IncomeService {
   /**
    * Add income
@@ -29,7 +28,6 @@ class IncomeService {
     });
     return income;
   }
-
   /**
    * get income by id
    */
@@ -45,7 +43,6 @@ class IncomeService {
     }
     return income;
   }
-
   /**
    * get all incomes
    */

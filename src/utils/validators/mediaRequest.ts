@@ -1,5 +1,3 @@
-// media request
-
 import { NextFunction, Request, Response } from 'express';
 import HttpException from '../api/httpException';
 
@@ -25,8 +23,6 @@ export const mediaRequest = (
     req.body = payload;
     next();
   } catch (error) {
-    // if your file is not upload, -> upload error
-    // file -> delete.
     next(error);
     console.log(error);
   }
