@@ -68,7 +68,7 @@ export class authMiddleware {
       next();
     } catch (err: any) {
       if (err instanceof jwt.JsonWebTokenError) {
-        next(new HttpException(401, 'Invalid or expired token'));
+        throw new HttpException(401, 'Invalid or expired token');
       } else {
         next(err);
       }
@@ -78,7 +78,7 @@ export class authMiddleware {
   // Middleware with Redis blacklist check
   authMiddlewareWithRedis = async (
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction,
   ) => {
     try {
