@@ -14,12 +14,9 @@ import { sendPasswordResetConfirmationEmail } from '../../utils/email/passwordRe
 import { authMiddleware } from '../../middleware/authMiddleware';
 import { hashPassword, verifyPassword } from '../../utils/password/hash';
 import { randomBytes } from 'crypto';
-import Redis from 'ioredis';
-import envConfig from '../../config/setup/envConfig';
+import redis from '../../config/setup/redis';
 import { prisma } from '../../config/setup/dbSetup';
 import jwt from 'jsonwebtoken';
-
-const redis = new Redis(envConfig.redis.url || 'redis://localhost:6379');
 
 const auth = new authMiddleware();
 /**

@@ -36,9 +36,11 @@ app.use(express.json());
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
+
 app.use('/api/v2', appRouter);
+
 app.use(globalErrorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`Server is running at port ${PORT}`);
+app.listen(9000, () => {
+  logger.info(`Server is running at 9000 ${9000}`);
 });

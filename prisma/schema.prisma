@@ -120,3 +120,5 @@ model Income {
 
   @@map("incomes")
 }
+
+

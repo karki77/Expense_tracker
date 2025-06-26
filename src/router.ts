@@ -5,6 +5,7 @@ import categoryRouter from './modules/category/router';
 import expenseRouter from './modules/expense/router';
 import incomeRouter from './modules/income/router';
 import profileRouter from './modules/profile/router';
+import fileRouter from './modules/fileupload/router';
 
 const appRouter = express.Router();
 
@@ -13,5 +14,6 @@ appRouter.use('/category', categoryRouter);
 appRouter.use('/expense', expenseRouter);
 appRouter.use('/income', incomeRouter);
 appRouter.use('/profile', profileRouter);
+appRouter.use('/fileupload', fileRouter);
 
 export default appRouter;
