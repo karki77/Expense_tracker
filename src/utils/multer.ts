@@ -45,6 +45,7 @@ const fileFilter = (
     'text/plain',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv',
   ];
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);

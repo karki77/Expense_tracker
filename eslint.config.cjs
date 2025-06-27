@@ -5,6 +5,9 @@ const tsParser = require('@typescript-eslint/parser');
 /** @type {import("eslint").Config[]} */
 module.exports = [
   {
+    ignores: ['dist/**', 'example.ts'],
+  },
+  {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsParser,

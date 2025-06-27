@@ -8,7 +8,7 @@ export class FileUploadController {
   /**
    * Upload excel file
    */
-  public async uploadExcelFile(
+  public async processUploadedFile(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -20,17 +20,15 @@ export class FileUploadController {
       }
 
       console.log('Uploaded file:', req.file);
-
-      // Just use the filename
-      const filename = req.file.filename;
+      console.log('Parsed & validated data:', req.body);
 
       // Update user profile with just the filename
-      await this.ExcelfileUploadService.uploadExcelFile(filename);
+      await this.ExcelfileUploadService.parseFile(req.file.filename);
 
       res.send(
         new HttpResponse({
           message: 'file uploaded successfully',
-          data: { filename },
+          data: { filename: req.file.filename, parsedData: req.body },
         }),
       );
     } catch (error) {

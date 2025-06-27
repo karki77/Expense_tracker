@@ -5,7 +5,7 @@ import categoryRouter from './modules/category/router';
 import expenseRouter from './modules/expense/router';
 import incomeRouter from './modules/income/router';
 import profileRouter from './modules/profile/router';
-import fileRouter from './modules/fileupload/router';
+import fileRouter from './modules/filesystem/router';
 
 const appRouter = express.Router();
 
