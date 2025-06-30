@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import bodyValidator from '#utils/validators/bodyValidator';
+import bodyValidator from '../../utils/validators/bodyValidator';
 import paramValidator from '#utils/validators/paramValidator';
 import IncomeController from './controller';
 import {

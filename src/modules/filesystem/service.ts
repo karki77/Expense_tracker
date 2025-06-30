@@ -2,12 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
 import * as csvParser from 'csv-parse/sync';
-import HttpException from '#utils/api/httpException';
+import HttpException from '../../utils/api/httpException';
 
 interface ParsedRow {
   [key: string]: string;
 }
-
 class FileUploadService {
   async parseFile(filename: string): Promise<ParsedRow[]> {
     const uploadDir = path.resolve(process.cwd(), 'uploads');

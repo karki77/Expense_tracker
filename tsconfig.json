@@ -10,8 +10,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./src", // if you need base URL
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -28,8 +28,6 @@
     "composite": true //optional: for monorepos or incremental compilation
   },
   "include": [
-    "src",
-    "example.ts"
-  ],
-  "exclude": ["dist", "node_modules","example.ts"] //Correct: Excludes dist and node_modules
+    "src"],
+  "exclude": ["dist", "node_modules"] //Correct: Excludes dist and node_modules
 }

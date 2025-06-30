@@ -9,6 +9,6 @@ class HttpException extends Error {
     this.success = false;
     this.message = message;
   }
-} //
+}
 
 export default HttpException;

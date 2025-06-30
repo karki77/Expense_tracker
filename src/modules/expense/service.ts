@@ -1,8 +1,8 @@
 import { prisma } from '../../config/setup/dbSetup';
 import type { IAddExpenseSchema, IUpdateExpenseSchema } from './validation';
 import HttpException from '../../utils/api/httpException';
-import { IPaginationSchema } from '#utils/validators/commonValidation';
-import { pagination, getPageDocs } from '#utils/pagination/pagination';
+import { IPaginationSchema } from '../../utils/validators/commonValidation';
+import { pagination, getPageDocs } from '../../utils/pagination/pagination';
 
 /**
  * Expense Service
