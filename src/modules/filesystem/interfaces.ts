@@ -57,3 +57,14 @@ export interface ValidationResult {
   invalidRecords: MediaRequestData[];
   errors: string[];
 }
+
+export interface ParsedRow {
+  [key: string]: string;
+}
+
+export interface FileInfo {
+  filename: string;
+  size: number;
+  mimeType: string;
+  lastModified: Date;
+}

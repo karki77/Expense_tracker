@@ -37,8 +37,13 @@ export const csvRowSchema = z
   .strict({
     message: 'Row contains extra fields that are not allowed',
   });
-// Custom validation to ensure no empty strings in the row
 
+export const filenameSchema = z.object({
+  Filename: z.string({
+    message: 'filename is required',
+  }),
+});
 export const csvRowsSchema = z.array(csvRowSchema);
 
 export type CsvRow = z.infer<typeof csvRowSchema>;
+export type fileName = z.infer<typeof filenameSchema>;

@@ -1,4 +1,4 @@
 import fileRouter from './router';
-import FileUploadController from './controller';
+import FileController from './controller';
 
-export { fileRouter, FileUploadController };
+export { fileRouter, FileController };

@@ -14,6 +14,6 @@ appRouter.use('/category', categoryRouter);
 appRouter.use('/expense', expenseRouter);
 appRouter.use('/income', incomeRouter);
 appRouter.use('/profile', profileRouter);
-appRouter.use('/fileupload', fileRouter);
+appRouter.use('/fileservice', fileRouter);
 
 export default appRouter;
