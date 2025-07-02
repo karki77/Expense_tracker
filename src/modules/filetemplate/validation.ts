@@ -9,7 +9,7 @@ export const csvRowSchema = z
       .min(1, {
         message: 'Full name must be at least 1 character long',
       }),
-    email: z.string({
+    Email: z.string({
       message: 'Email is required',
     }),
     Address: z
@@ -19,9 +19,13 @@ export const csvRowSchema = z
       .min(1, {
         message: 'Address must be at least 1 character long',
       }),
-    'Date of Birth': z.string({
-      message: 'Date of Birth is required',
-    }),
+    'Date of Birth': z
+      .string({
+        message: 'Date of Birth is required',
+      })
+      .min(1, {
+        message: 'Date of Birth must be at least 1 character long',
+      }),
     Gender: z.string({
       message: 'Gender is required',
     }),

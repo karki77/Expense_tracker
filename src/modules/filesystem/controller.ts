@@ -8,7 +8,7 @@ export class FileController {
   /**
    * Upload excel file
    */
-  public async processUploadedFile(
+  async processUploadedFile(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -53,6 +53,29 @@ export class FileController {
         new HttpResponse({
           message: 'File information retreived successfully',
           data: { ...fileInfo },
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  /*
+   * stream download the file
+   */
+  async streamFileDownload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { filename } = req.params;
+      if (!filename) {
+        throw new HttpException(400, 'Filename parameter is required');
+      }
+      await this.FileService.streamFileDownload(filename, res);
+      res.send(
+        new HttpResponse({
+          message: 'file downloaded successfully',
         }),
       );
     } catch (error) {

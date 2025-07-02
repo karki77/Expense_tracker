@@ -61,7 +61,7 @@ class FileService {
   /**
    * Stream file download to response
    */
-  streamFileDownload(filename: string, res: Response): void {
+  async streamFileDownload(filename: string, res: Response): Promise<void> {
     const filePath = path.join(this.uploadDir, filename);
 
     if (!fs.existsSync(filePath)) {
