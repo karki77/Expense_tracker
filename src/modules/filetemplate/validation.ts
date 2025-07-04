@@ -32,6 +32,9 @@ export const csvRowSchema = z
     'Course Name': z.string({
       message: 'Course Name is required',
     }),
+    Batch: z.string({
+      message: 'Batch is required',
+    }),
   })
   .strict({
     message: 'Row contains extra fields that are not allowed',

@@ -1,16 +1,14 @@
 import ExcelJS from 'exceljs';
-import * as XLSX from 'xlsx';
 import { Request, Response } from 'express';
-import { TemplateConfig } from './interface';
-import * as csvParser from 'csv-parse/sync';
-import HttpException from '../../utils/api/httpException';
 import path from 'path';
 import fs from 'fs';
+import XLSX from 'xlsx';
+import csvParser from 'csv-parse/sync';
+import HttpException from '../../utils/api/httpException';
 import { ParsedRow } from './interface';
 
-export class FileTemplateService {
+class FileTemplateService {
   private readonly uploadDir = path.resolve(process.cwd(), 'uploads');
-
   async generateAndDownloadTemplate(
     req: Request,
     res: Response,
@@ -54,27 +52,19 @@ export class FileTemplateService {
     validationSheet.state = 'hidden';
 
     // Updated course batches mapping
-    const courseBatches = {
-      NodeJS: ['morning', 'evening'],
-      JavaScript: ['B1', 'B2', 'B3'],
-    };
-
+    // @ts-expect-error
+    const fetchCourses = []; // TODO: Replace with actual fetch logic
+    const courseBatches: Record<string, string[]> = {};
+    //@ts-expect-error
+    for (const course of fetchCourses) {
+      //@ts-expect-error
+      const batchTitles = course.batches.map((batch) => batch.title);
+      if (batchTitles.length > 0) {
+        courseBatches[course.title] = batchTitles;
+      }
+    }
     const courses = Object.keys(courseBatches);
-
-    // Fill course list in column A
-    courses.forEach((course, i) => {
-      validationSheet.getCell(i + 1, 1).value = course;
-    });
-
-    // Fill NodeJS batches in column B
-    courseBatches.NodeJS.forEach((batch, i) => {
-      validationSheet.getCell(i + 1, 2).value = batch;
-    });
-
-    // Fill JavaScript batches in column C
-    courseBatches.JavaScript.forEach((batch, i) => {
-      validationSheet.getCell(i + 1, 3).value = batch;
-    });
+    fillValidationData(validationSheet, courseBatches);
 
     // Unlock all input cells
     for (let rowIndex = 2; rowIndex <= 600; rowIndex++) {
@@ -119,11 +109,10 @@ export class FileTemplateService {
 
       // Dynamic Batch dropdown (I) using OFFSET function
       // This creates a conditional dropdown based on the course selection
+      const formula = generateOffsetFormula(courseBatches, rowIndex);
       worksheet.getCell(`I${rowIndex}`).dataValidation = {
         type: 'list',
-        formulae: [
-          `OFFSET(ValidationData!$B$1,0,IF(H${rowIndex}="NodeJS",0,IF(H${rowIndex}="JavaScript",1,0)),IF(H${rowIndex}="NodeJS",${courseBatches.NodeJS.length},IF(H${rowIndex}="JavaScript",${courseBatches.JavaScript.length},1)),1)`,
-        ],
+        formulae: [formula],
         allowBlank: true,
         showErrorMessage: true,
         errorTitle: 'Invalid Batch',
@@ -155,6 +144,95 @@ export class FileTemplateService {
     await workbook.xlsx.write(res);
     res.end();
   }
+  /**
+   * Parse uploaded file and return parsed rows
+   */
+  async parseFile(buffer: Buffer, filename: string): Promise<ParsedRow[]> {
+    if (!buffer || buffer.length === 0) {
+      throw new HttpException(400, 'File buffer is empty or invalid');
+    }
+
+    const ext = path.extname(filename).toLowerCase();
+
+    try {
+      if (ext === '.csv') {
+        // Convert buffer to string for CSV parsing
+        const fileContent = buffer.toString('utf-8');
+        return csvParser.parse(fileContent, {
+          columns: true,
+          skip_empty_lines: true,
+          trim: true,
+        });
+      } else if (ext === '.xlsx' || ext === '.xls') {
+        // Parse Excel file directly from buffer
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
+        console.log('Workbook sheet names:', workbook.SheetNames);
+
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        console.log('Sheet data:', sheet);
+
+        const parsed = XLSX.utils.sheet_to_json(sheet, {
+          defval: '',
+          raw: false,
+        });
+        console.log('Parsed output:', parsed);
+        return parsed as ParsedRow[];
+      } else {
+        throw new HttpException(400, 'Unsupported file type');
+      }
+    } catch (error) {
+      console.error('File parsing error:', error);
+      throw new HttpException(500, 'Failed to parse file');
+    }
+  }
+}
+
+/**
+ * Fill validation data
+ */
+function fillValidationData(
+  sheet: ExcelJS.Worksheet,
+  courseBatches: Record<string, string[]>,
+) {
+  const courses = Object.keys(courseBatches);
+
+  // Fill course names in column A
+  courses.forEach((course, rowIndex) => {
+    sheet.getCell(rowIndex + 1, 1).value = course;
+  });
+
+  // Fill each course's batches in columns B, C, D, etc.
+  courses.forEach((course, colIndex) => {
+    const batches = courseBatches[course];
+    batches.forEach((batch, rowIndex) => {
+      // +2 because batches start from column B (2nd column)
+      sheet.getCell(rowIndex + 1, colIndex + 2).value = batch;
+    });
+  });
+}
+
+/**
+ * Generate offset formula for batch based on course
+ */
+function generateOffsetFormula(
+  courseBatches: Record<string, string[]>,
+  rowIndex: number,
+): string {
+  const courseNames = Object.keys(courseBatches);
+
+  const colOffsetFormula = courseNames
+    .map((course, idx) => `IF(H${rowIndex}="${course}",${idx}`)
+    .join(',');
+  const colOffset = `${colOffsetFormula}${')'.repeat(courseNames.length)}`;
+
+  const heightFormula = courseNames
+    .map(
+      (course) => `IF(H${rowIndex}="${course}",${courseBatches[course].length}`,
+    )
+    .join(',');
+  const height = `${heightFormula}${')'.repeat(courseNames.length)}`;
+
+  return `OFFSET(ValidationData!$B$1,0,${colOffset},${height},1)`;
 }
 
 export default new FileTemplateService();

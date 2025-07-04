@@ -139,14 +139,15 @@ export class ProfileController {
   async getTopExpenses(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
-      const topExpenses = await ProfileService.getTopExpenses(
+      const { topExpenses, pagination } = await ProfileService.getTopExpenses(
         userId,
-        req.query as IPaginationSchema,
+        req.query,
       );
       res.send(
         new HttpResponse({
           message: 'Top expenses retrieved successfully',
           data: topExpenses,
+          docs: pagination,
         }),
       );
     } catch (error) {

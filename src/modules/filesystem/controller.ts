@@ -19,10 +19,6 @@ export class FileController {
         throw new HttpException(400, 'No file uploaded');
       }
 
-      console.log('Uploaded file:', req.file);
-      console.log('Parsed & validated data:', req.body);
-
-      // Update user profile with just the filename
       await this.FileService.parseFile(req.file.filename);
 
       res.send(

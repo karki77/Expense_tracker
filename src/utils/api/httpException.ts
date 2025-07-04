@@ -1,3 +1,4 @@
+import { DMMF } from '@prisma/client/runtime/library';
 import { HTTPSTATUS } from '../enums/httpResponse';
 class HttpException extends Error {
   public readonly status: HTTPSTATUS;
@@ -10,5 +11,4 @@ class HttpException extends Error {
     this.message = message;
   }
 }
-
 export default HttpException;

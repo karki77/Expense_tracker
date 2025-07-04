@@ -164,7 +164,7 @@ class ProfileService {
         }),
         prisma.expense.aggregate({
           _sum: { amount: true },
-          where: { userId, date: { gte: startOfMonth } },
+          where: { userId, createdAt: { gte: startOfMonth } },
         }),
         prisma.income.aggregate({
           _sum: { amount: true },
@@ -192,24 +192,26 @@ class ProfileService {
    * get top expenses
    */
   async getTopExpenses(userId: string, query: IPaginationSchema) {
-    const paginationConfig = pagination({
+    const { limit, skip, page } = pagination({
       limit: query.limit,
       page: query.page,
     });
+
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
     // Execute queries
     const [topExpenses, totalCount] = await Promise.all([
       prisma.expense.findMany({
         where: {
           userId,
-          date: { gte: startOfMonth },
+          date: { lte: startOfMonth },
         },
         orderBy: {
           amount: 'desc',
         },
-        take: paginationConfig.limit,
-        skip: paginationConfig.skip,
+        take: limit,
+        skip,
         select: {
           id: true,
           name: true,
@@ -221,16 +223,18 @@ class ProfileService {
       prisma.expense.count({
         where: {
           userId,
-          date: { gte: startOfMonth },
+          date: { lte: startOfMonth },
         },
       }),
     ]);
     // Generate pagination docs
     const paginationDocs = getPageDocs({
-      page: paginationConfig.page,
-      limit: paginationConfig.limit,
+      page: page,
+      limit: limit,
       count: totalCount,
     });
+
+    //
     return {
       topExpenses,
       pagination: paginationDocs,
